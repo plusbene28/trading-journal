@@ -1,0 +1,3345 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Journal">
+  <meta name="theme-color" content="#000000">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="Diario de trading. Limpio, preciso, siempre a mano.">
+  <title>Trading Journal</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <style>
+:root {
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --surface-3: #3a3a3c;
+  --label: #ffffff;
+  --secondary: #8e8e93;
+  --tertiary: #636366;
+  --quaternary: #48484a;
+  --green: #30d158;
+  --green-soft: rgba(48, 209, 88, 0.16);
+  --green-softer: rgba(48, 209, 88, 0.08);
+  --red: #ff453a;
+  --red-soft: rgba(255, 69, 58, 0.16);
+  --red-softer: rgba(255, 69, 58, 0.08);
+  --blue: #0a84ff;
+  --orange: #ff9f0a;
+  --yellow: #ffd60a;
+  --purple: #bf5af2;
+  --separator: rgba(84, 84, 88, 0.65);
+  --separator-2: rgba(84, 84, 88, 0.32);
+  --fill: rgba(120, 120, 128, 0.20);
+  --fill-2: rgba(120, 120, 128, 0.36);
+  --fill-3: rgba(118, 118, 128, 0.24);
+  --radius: 20px;
+  --radius-s: 12px;
+  --radius-m: 16px;
+  --tab-h: 49px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+  --page-x: 16px;
+  color-scheme: dark;
+  -webkit-tap-highlight-color: transparent;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--label);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input, textarea, select {
+  user-select: text;
+  -webkit-user-select: text;
+  font: inherit;
+  font-size: 16px;
+  color-scheme: dark;
+}
+
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+#app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+  background: var(--bg);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  padding: var(--safe-top) var(--page-x) 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  flex-shrink: 0;
+}
+
+.topbar-inner {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.brand-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #000;
+  border: 0.5px solid rgba(255,255,255,0.14);
+}
+
+.brand-mark img { width: 100%; height: 100%; display: block; }
+
+.brand-title {
+  font-size: 17px;
+  font-weight: 640;
+  letter-spacing: -0.4px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .22s ease, transform .22s ease;
+  white-space: nowrap;
+}
+
+.topbar.scrolled .brand-title { opacity: 1; transform: none; }
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--blue);
+  background: var(--fill);
+}
+
+.icon-btn svg { width: 18px; height: 18px; }
+.icon-btn:active { opacity: 0.55; }
+
+#content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(var(--tab-h) + var(--safe-bot) + 24px);
+  outline: none;
+}
+
+.page { padding: 4px 0 16px; }
+
+.large-title {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -1.1px;
+  line-height: 1.1;
+  padding: 2px var(--page-x) 14px;
+}
+
+.eyebrow {
+  font-size: 13px;
+  font-weight: 590;
+  color: var(--secondary);
+  letter-spacing: -0.08px;
+  padding: 0 var(--page-x);
+}
+
+.hero {
+  padding: 0 var(--page-x) 18px;
+}
+
+.hero-pnl {
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -1.8px;
+  line-height: 1.02;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "ss01" 1;
+}
+
+.hero-pnl.up { color: var(--green); }
+.hero-pnl.down { color: var(--red); }
+.hero-pnl.flat { color: var(--label); }
+
+.hero-sub {
+  margin-top: 6px;
+  font-size: 15px;
+  color: var(--secondary);
+  letter-spacing: -0.2px;
+}
+
+/* Banners */
+.banner {
+  margin: 0 var(--page-x) 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-m);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.banner.stop { background: var(--red-soft); }
+.banner.warn { background: rgba(255, 159, 10, 0.16); }
+.banner.tip { background: var(--surface); }
+.banner.info { background: rgba(10, 132, 255, 0.16); }
+.banner.ok { background: var(--green-soft); }
+
+.banner-icon { font-size: 18px; line-height: 1.2; flex-shrink: 0; }
+.banner-body { min-width: 0; flex: 1; }
+.banner-title { font-size: 15px; font-weight: 640; letter-spacing: -0.2px; margin-bottom: 2px; }
+.banner.stop .banner-title { color: var(--red); }
+.banner.warn .banner-title { color: var(--orange); }
+.banner.info .banner-title { color: #64d2ff; }
+.banner.ok .banner-title { color: var(--green); }
+.banner-text { font-size: 13px; color: var(--secondary); line-height: 1.35; }
+.banner .dismiss {
+  color: var(--secondary);
+  font-size: 13px;
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  margin: 0 var(--page-x) 12px;
+  overflow: hidden;
+}
+
+.card-pad { padding: 16px; }
+.card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px 16px 8px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 640;
+  letter-spacing: -0.23px;
+}
+
+.card-meta {
+  font-size: 13px;
+  color: var(--secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Metric grid */
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin: 0 var(--page-x) 12px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.metric {
+  padding: 14px 16px 16px;
+  position: relative;
+  min-width: 0;
+}
+
+.metric:nth-child(odd)::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  right: 0;
+  bottom: 12px;
+  width: 0.5px;
+  background: var(--separator-2);
+}
+
+.metric:nth-child(n+3)::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 0;
+  height: 0.5px;
+  background: var(--separator-2);
+}
+
+.metric-label {
+  font-size: 12px;
+  font-weight: 510;
+  color: var(--secondary);
+  letter-spacing: -0.08px;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 22px;
+  font-weight: 670;
+  letter-spacing: -0.7px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric-value.up { color: var(--green); }
+.metric-value.down { color: var(--red); }
+.metric-value.sm { font-size: 18px; }
+
+/* Equity */
+.equity-wrap { padding: 4px 8px 8px; height: 168px; }
+.equity-wrap svg { width: 100%; height: 100%; display: block; }
+
+/* Calendar */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 8px;
+}
+
+.cal-nav h3 {
+  font-size: 17px;
+  font-weight: 640;
+  letter-spacing: -0.4px;
+}
+
+.chev {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--blue);
+}
+.chev:active { opacity: 0.5; }
+.chev svg { width: 18px; height: 18px; }
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+  width: 100%;
+}
+
+.cal-wd {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 590;
+  color: var(--tertiary);
+  padding: 4px 0 6px;
+}
+
+.cal-day {
+  aspect-ratio: 1 / 1.08;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.cal-day.empty { visibility: hidden; }
+
+.cal-num {
+  font-size: 12px;
+  font-weight: 580;
+  color: var(--secondary);
+  line-height: 1;
+}
+
+.cal-day.today .cal-num {
+  background: #fff;
+  color: #000;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cal-pnl {
+  font-size: 8.5px;
+  font-weight: 640;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.2px;
+  line-height: 1;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 2px;
+}
+
+.cal-day.up { background: var(--green-soft); }
+.cal-day.up .cal-pnl { color: var(--green); }
+.cal-day.up .cal-num { color: var(--green); }
+.cal-day.down { background: var(--red-soft); }
+.cal-day.down .cal-pnl { color: var(--red); }
+.cal-day.down .cal-num { color: var(--red); }
+.cal-day.up.today .cal-num,
+.cal-day.down.today .cal-num { background: #fff; color: #000; }
+
+.cal-legend {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--secondary);
+  font-variant-numeric: tabular-nums;
+}
+.cal-legend .up { color: var(--green); }
+.cal-legend .down { color: var(--red); }
+
+/* Bars */
+.bar-row {
+  display: grid;
+  grid-template-columns: minmax(0, 108px) 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.bar-label {
+  font-size: 13px;
+  color: var(--secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-track {
+  height: 7px;
+  background: var(--fill);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.bar-fill { height: 100%; border-radius: 99px; }
+.bar-fill.up { background: var(--green); }
+.bar-fill.down { background: var(--red); }
+
+.bar-val {
+  font-size: 13px;
+  font-weight: 590;
+  font-variant-numeric: tabular-nums;
+  min-width: 72px;
+  text-align: right;
+  letter-spacing: -0.2px;
+}
+.bar-val.up { color: var(--green); }
+.bar-val.down { color: var(--red); }
+
+/* Insights */
+.insight {
+  padding: 14px 0;
+  position: relative;
+}
+.insight + .insight::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 0.5px;
+  background: var(--separator-2);
+}
+.insight-kicker {
+  font-size: 12px;
+  font-weight: 640;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  color: var(--secondary);
+  margin-bottom: 3px;
+}
+.insight-kicker.good { color: var(--green); }
+.insight-kicker.bad { color: var(--red); }
+.insight-kicker.warn { color: var(--orange); }
+.insight-title {
+  font-size: 16px;
+  font-weight: 640;
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}
+.insight-body {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--secondary);
+  letter-spacing: -0.16px;
+}
+
+/* Compliance split */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.split-col { padding: 4px 0 8px; position: relative; }
+.split-col + .split-col::before {
+  content: "";
+  position: absolute;
+  top: 8px; bottom: 8px; left: 0;
+  width: 0.5px;
+  background: var(--separator-2);
+}
+.split-col + .split-col { padding-left: 16px; }
+.split-label { font-size: 12px; color: var(--secondary); margin-bottom: 4px; }
+.split-val { font-size: 22px; font-weight: 670; letter-spacing: -0.7px; font-variant-numeric: tabular-nums; }
+.split-val.up { color: var(--green); }
+.split-val.down { color: var(--red); }
+.split-meta { font-size: 12px; color: var(--tertiary); margin-top: 2px; }
+
+/* Account chips */
+.scroller {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 var(--page-x) 14px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.scroller::-webkit-scrollbar { display: none; }
+
+.chip {
+  flex-shrink: 0;
+  border: 0;
+  background: var(--fill);
+  color: var(--label);
+  font-size: 13px;
+  font-weight: 590;
+  letter-spacing: -0.2px;
+  padding: 7px 12px;
+  border-radius: 99px;
+  line-height: 1.2;
+}
+.chip.on { background: #fff; color: #000; }
+.chip:active { opacity: 0.7; }
+
+.chip-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Trades list */
+.search-wrap {
+  padding: 0 var(--page-x) 10px;
+}
+
+.search {
+  width: 100%;
+  height: 36px;
+  border-radius: 10px;
+  border: 0;
+  background: var(--fill);
+  color: var(--label);
+  padding: 0 12px 0 34px;
+  font-size: 16px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%238e8e93' stroke-width='1.7' stroke-linecap='round'><circle cx='7' cy='7' r='5.2'/><path d='M11 11.5 L14 14.5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: 10px 50%;
+}
+.search::placeholder { color: var(--tertiary); }
+.search:focus { outline: none; background-color: var(--fill-2); }
+
+.day-group { margin: 0 0 8px; }
+.day-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 14px var(--page-x) 6px;
+}
+.day-title {
+  font-size: 13px;
+  font-weight: 640;
+  color: var(--secondary);
+  text-transform: capitalize;
+}
+.day-total {
+  font-size: 13px;
+  font-weight: 640;
+  font-variant-numeric: tabular-nums;
+}
+.day-total.up { color: var(--green); }
+.day-total.down { color: var(--red); }
+
+.trade {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px var(--page-x);
+  background: var(--surface);
+  position: relative;
+}
+.day-group .trade:first-of-type { border-radius: 16px 16px 0 0; }
+.day-group .trade:last-of-type { border-radius: 0 0 16px 16px; }
+.day-group .trade:only-of-type { border-radius: 16px; }
+.day-group { padding: 0 var(--page-x); }
+.day-group .day-head { padding-left: 4px; padding-right: 4px; }
+.trade + .trade::before {
+  content: "";
+  position: absolute;
+  left: 16px; right: 0; top: 0;
+  height: 0.5px;
+  background: var(--separator-2);
+}
+.trade:active { background: var(--surface-2); }
+
+.side-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--tertiary);
+}
+.side-dot.long { background: var(--blue); }
+.side-dot.short { background: var(--orange); }
+
+.trade-main { flex: 1; min-width: 0; }
+.trade-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.trade-sym {
+  font-size: 17px;
+  font-weight: 640;
+  letter-spacing: -0.4px;
+}
+.trade-pnl {
+  font-size: 17px;
+  font-weight: 640;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.4px;
+}
+.trade-pnl.up { color: var(--green); }
+.trade-pnl.down { color: var(--red); }
+.trade-sub {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.trade-flags { display: flex; gap: 6px; margin-top: 5px; }
+.flag {
+  font-size: 11px;
+  font-weight: 590;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--fill);
+  color: var(--secondary);
+}
+.flag.bad { background: var(--red-soft); color: var(--red); }
+.flag.news { background: rgba(255, 159, 10, 0.16); color: var(--orange); }
+
+/* Accounts */
+.acct {
+  padding: 16px;
+}
+.acct:active { background: #242426; }
+.acct-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.acct-name {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.4px;
+}
+.acct-firm { font-size: 13px; color: var(--secondary); margin-top: 2px; }
+.status {
+  font-size: 11px;
+  font-weight: 670;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+.status.eval { background: rgba(10, 132, 255, 0.18); color: #64d2ff; }
+.status.funded { background: var(--green-soft); color: var(--green); }
+.status.breached { background: var(--red-soft); color: var(--red); }
+.status.payout { background: rgba(255, 214, 10, 0.16); color: var(--yellow); }
+
+.acct-bal {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.9px;
+  font-variant-numeric: tabular-nums;
+  margin: 4px 0 12px;
+}
+
+.progress {
+  height: 8px;
+  background: var(--fill);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress > span {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--green);
+}
+.progress.danger > span { background: var(--red); }
+.progress.warn > span { background: var(--orange); }
+
+.acct-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 12px;
+  margin-top: 14px;
+}
+.acct-stat-label { font-size: 11px; color: var(--secondary); }
+.acct-stat-val {
+  font-size: 15px;
+  font-weight: 620;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.3px;
+  margin-top: 2px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 0.5px solid var(--separator-2);
+  font-size: 15px;
+}
+
+/* iOS switch */
+.switch {
+  position: relative;
+  width: 51px;
+  height: 31px;
+  flex-shrink: 0;
+}
+.switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.switch span {
+  position: absolute;
+  inset: 0;
+  background: var(--fill-2);
+  border-radius: 31px;
+  transition: background .2s;
+}
+.switch span::before {
+  content: "";
+  position: absolute;
+  width: 27px;
+  height: 27px;
+  left: 2px;
+  top: 2px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .22s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+.switch input:checked + span { background: var(--green); }
+.switch input:checked + span::before { transform: translateX(20px); }
+
+/* Rules */
+.rule {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  position: relative;
+  width: 100%;
+  text-align: left;
+}
+.rule + .rule::before {
+  content: "";
+  position: absolute;
+  left: 16px; right: 0; top: 0;
+  height: 0.5px;
+  background: var(--separator-2);
+}
+.rule-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--fill);
+  color: var(--secondary);
+  font-size: 12px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.rule-text {
+  flex: 1;
+  font-size: 15px;
+  letter-spacing: -0.2px;
+  line-height: 1.35;
+  padding-top: 2px;
+}
+.rule-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.ghost {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--secondary);
+}
+.ghost:active { opacity: 0.5; }
+.ghost.danger { color: var(--secondary); }
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  width: 100%;
+  text-align: left;
+  position: relative;
+}
+.check + .check::before {
+  content: "";
+  position: absolute;
+  left: 52px; right: 0; top: 0;
+  height: 0.5px;
+  background: var(--separator-2);
+}
+.box {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  border: 1.5px solid var(--tertiary);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: grid;
+  place-items: center;
+  transition: background .15s, border-color .15s;
+}
+.box svg { display: none; width: 13px; height: 13px; }
+.check.on .box {
+  background: var(--green);
+  border-color: var(--green);
+}
+.check.on .box svg { display: block; }
+.check.on .check-text { color: var(--secondary); }
+.check-text { font-size: 15px; letter-spacing: -0.2px; line-height: 1.35; padding-top: 1px; }
+
+.add-row {
+  width: calc(100% - 32px);
+  margin: 0 16px 12px;
+  height: 48px;
+  border-radius: var(--radius-m);
+  background: var(--surface);
+  color: var(--blue);
+  font-size: 16px;
+  font-weight: 590;
+  letter-spacing: -0.2px;
+}
+.add-row:active { opacity: 0.65; }
+
+/* Tab bar */
+.tabbar {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding-bottom: var(--safe-bot);
+  background: rgba(22, 22, 22, 0.78);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  z-index: 30;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: var(--tab-h);
+  color: var(--secondary);
+  min-width: 0;
+}
+.tab svg { width: 24px; height: 24px; }
+.tab-label {
+  font-size: 10px;
+  font-weight: 510;
+  letter-spacing: -0.1px;
+}
+.tab.on { color: var(--label); }
+
+.tab.plus {
+  color: var(--secondary);
+}
+.plus-orb {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  color: #000;
+  display: grid;
+  place-items: center;
+  margin-top: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.35);
+}
+.plus-orb svg { width: 18px; height: 18px; }
+.tab.plus:active .plus-orb { transform: scale(0.94); }
+
+/* Sheets */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.52);
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .32s ease;
+}
+.backdrop.on { opacity: 1; pointer-events: auto; }
+
+.sheet {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  max-height: 94dvh;
+  background: #1c1c1e;
+  border-radius: 20px 20px 0 0;
+  z-index: 50;
+  transform: translateY(110%);
+  transition: transform .42s cubic-bezier(0.32, 0.72, 0, 1);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--safe-bot);
+}
+.sheet.on { transform: translateY(0); }
+
+.sheet-handle {
+  width: 36px;
+  height: 5px;
+  border-radius: 99px;
+  background: var(--fill-2);
+  margin: 8px auto 0;
+  flex-shrink: 0;
+}
+
+.sheet-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 10px;
+  flex-shrink: 0;
+}
+.sheet-bar h2 {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.3px;
+}
+.sheet-link {
+  min-width: 72px;
+  height: 36px;
+  padding: 0 8px;
+  color: var(--blue);
+  font-size: 17px;
+  font-weight: 400;
+}
+.sheet-link.strong { font-weight: 650; }
+.sheet-link:disabled { opacity: 0.35; }
+.sheet-link:active { opacity: 0.55; }
+.sheet-link.danger { color: var(--red); }
+.sheet-bar h2 { text-align: center; flex: 1; }
+.sheet-bar .sheet-link:first-child { text-align: left; }
+.sheet-bar .sheet-link:last-child { text-align: right; }
+
+.sheet-body {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 16px 28px;
+  flex: 1;
+}
+
+.group {
+  background: var(--surface-2);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.group.plain { background: transparent; }
+
+.row {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 14px;
+  gap: 10px;
+  position: relative;
+}
+.row.wrap { flex-wrap: wrap; align-items: flex-start; padding-top: 12px; padding-bottom: 12px; }
+.row + .row::before {
+  content: "";
+  position: absolute;
+  left: 14px; right: 0; top: 0;
+  height: 0.5px;
+  background: var(--separator-2);
+}
+.row-label {
+  font-size: 16px;
+  color: var(--label);
+  flex-shrink: 0;
+  min-width: 96px;
+}
+.row-field {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+}
+.row input[type="text"],
+.row input[type="number"],
+.row input[type="date"],
+.row input[type="time"],
+.row input[type="search"],
+.row select {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  color: var(--label);
+  font-size: 16px;
+  text-align: right;
+  outline: none;
+  min-width: 0;
+}
+.row select { appearance: none; -webkit-appearance: none; padding-right: 16px; }
+.row textarea {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  color: var(--label);
+  font-size: 16px;
+  outline: none;
+  resize: none;
+  min-height: 88px;
+  text-align: left;
+  line-height: 1.4;
+}
+.row-note { display: block; padding: 10px 14px 14px; }
+.hint { font-size: 13px; color: var(--secondary); padding: 0 4px 8px; line-height: 1.35; }
+
+.segmented {
+  display: flex;
+  background: var(--fill);
+  border-radius: 9px;
+  padding: 2px;
+  flex: 1;
+}
+.segmented button {
+  flex: 1;
+  height: 30px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 590;
+  color: var(--label);
+  letter-spacing: -0.2px;
+}
+.segmented button.on {
+  background: var(--surface-3);
+  box-shadow: 0 0.5px 2px rgba(0,0,0,0.4);
+}
+.segmented.signed button.on.pos { background: var(--green); color: #000; }
+.segmented.signed button.on.neg { background: var(--red); color: #fff; }
+
+.pnl-hero {
+  text-align: center;
+  padding: 8px 0 18px;
+}
+.pnl-hero .lbl {
+  font-size: 13px;
+  color: var(--secondary);
+  margin-bottom: 4px;
+}
+.pnl-hero input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  text-align: center;
+  font-size: 44px;
+  font-weight: 700;
+  letter-spacing: -1.6px;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  color: var(--label);
+}
+.pnl-hero input.up { color: var(--green); }
+.pnl-hero input.down { color: var(--red); }
+.pnl-hero .sign-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+.pnl-hero .segmented { flex: 0 0 160px; }
+
+.stars { display: flex; gap: 6px; justify-content: flex-end; flex: 1; }
+.star {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: var(--quaternary);
+}
+.star.on { color: var(--yellow); }
+.star svg { width: 22px; height: 22px; }
+
+.media-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.media-tile, .media-add {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: var(--fill);
+  min-width: 0;
+}
+.media-open {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  display: block;
+  position: relative;
+}
+.media-open img, .media-ph {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: var(--surface-2);
+}
+.play-badge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.play-badge svg { width: 14px; height: 14px; }
+.media-x {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.62);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+}
+.media-x:active { opacity: 0.7; }
+.media-warn {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.58);
+  color: var(--orange);
+  font-size: 9px;
+  font-weight: 640;
+  text-align: center;
+  padding: 3px 4px;
+  pointer-events: none;
+  letter-spacing: -0.1px;
+}
+.media-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--secondary);
+  font-size: 12px;
+  font-weight: 590;
+}
+.media-add svg { width: 22px; height: 22px; }
+.media-add:active { opacity: 0.7; }
+
+.viewer {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+.viewer.on { opacity: 1; pointer-events: auto; }
+.viewer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: calc(var(--safe-top) + 6px) 6px 8px;
+  flex-shrink: 0;
+}
+.viewer-bar button {
+  color: #fff;
+  font-size: 17px;
+  padding: 8px 12px;
+  min-width: 64px;
+}
+.viewer-bar button:last-child { text-align: right; }
+.viewer-title {
+  font-size: 15px;
+  font-weight: 590;
+  color: rgba(255,255,255,0.72);
+}
+.viewer-stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 0 0 calc(var(--safe-bot) + 16px);
+}
+.viewer-stage img, .viewer-stage video {
+  max-width: 100%;
+  max-height: 100%;
+  background: #000;
+}
+.viewer-stage video { width: 100%; }
+
+.destructive {
+  width: 100%;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  color: var(--red);
+  font-size: 17px;
+  font-weight: 590;
+  margin-top: 8px;
+}
+
+/* Confirm */
+.confirm {
+  position: absolute;
+  left: 12px; right: 12px; bottom: calc(var(--safe-bot) + 12px);
+  z-index: 70;
+  transform: translateY(120%);
+  transition: transform .4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.confirm.on { transform: translateY(0); }
+.confirm-card {
+  background: rgba(44, 44, 46, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 14px;
+  overflow: hidden;
+  text-align: center;
+}
+.confirm-msg { padding: 16px 16px 12px; }
+.confirm-msg h3 { font-size: 13px; font-weight: 590; color: var(--secondary); margin-bottom: 2px; }
+.confirm-msg p { font-size: 13px; color: var(--secondary); }
+.confirm-card button {
+  width: 100%;
+  height: 56px;
+  font-size: 20px;
+  border-top: 0.5px solid var(--separator-2);
+}
+.confirm-card button.danger { color: var(--red); font-weight: 590; }
+.confirm-cancel {
+  margin-top: 8px;
+  width: 100%;
+  height: 56px;
+  border-radius: 14px;
+  background: #2c2c2e;
+  font-size: 20px;
+  font-weight: 650;
+  color: var(--blue);
+}
+
+/* Toast */
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--tab-h) + var(--safe-bot) + 16px);
+  transform: translate(-50%, 16px);
+  background: rgba(44, 44, 46, 0.96);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 99px;
+  font-size: 14px;
+  font-weight: 590;
+  z-index: 80;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s, transform .25s;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+.empty {
+  text-align: center;
+  padding: 48px 32px;
+  color: var(--secondary);
+}
+.empty h3 { color: var(--label); font-size: 20px; letter-spacing: -0.4px; margin: 8px 0 6px; }
+.empty p { font-size: 15px; line-height: 1.4; }
+
+.muted { color: var(--secondary); }
+.section-space { height: 8px; }
+.hidden { display: none !important; }
+
+/* Settings list */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 17px;
+  letter-spacing: -0.3px;
+  position: relative;
+  text-align: left;
+  color: var(--blue);
+}
+.settings-row + .settings-row::before {
+  content: "";
+  position: absolute;
+  left: 16px; right: 0; top: 0;
+  height: 0.5px;
+  background: var(--separator-2);
+}
+.settings-row.danger { color: var(--red); }
+.settings-row .chev-r { color: var(--tertiary); }
+
+kbd, .kbd {
+  font-size: 12px;
+  color: var(--secondary);
+}
+
+@media (min-width: 520px) {
+  #app {
+    border-left: 0.5px solid var(--separator-2);
+    border-right: 0.5px solid var(--separator-2);
+  }
+}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar" id="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-mark"><img src="icon-180.png" alt=""></div>
+          <div class="brand-title" id="compactTitle">Journal</div>
+        </div>
+        <button type="button" class="icon-btn" data-action="settings" aria-label="Ajustes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="content" tabindex="-1"></main>
+
+    <nav class="tabbar" aria-label="Navegación">
+      <button type="button" class="tab on" data-action="tab" data-tab="dashboard" id="tab-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3.5" y="3.5" width="7" height="9" rx="2"/>
+          <rect x="13.5" y="3.5" width="7" height="5" rx="2"/>
+          <rect x="13.5" y="11.5" width="7" height="9" rx="2"/>
+          <rect x="3.5" y="15.5" width="7" height="5" rx="2"/>
+        </svg>
+        <span class="tab-label">Resumen</span>
+      </button>
+      <button type="button" class="tab" data-action="tab" data-tab="trades" id="tab-trades">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 7h11M8 12h11M8 17h11"/>
+          <circle cx="5" cy="7" r="0.9" fill="currentColor" stroke="none"/>
+          <circle cx="5" cy="12" r="0.9" fill="currentColor" stroke="none"/>
+          <circle cx="5" cy="17" r="0.9" fill="currentColor" stroke="none"/>
+        </svg>
+        <span class="tab-label">Trades</span>
+      </button>
+      <button type="button" class="tab plus" data-action="new-trade" aria-label="Añadir trade">
+        <span class="plus-orb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 6v12M6 12h12"/>
+          </svg>
+        </span>
+      </button>
+      <button type="button" class="tab" data-action="tab" data-tab="accounts" id="tab-accounts">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="6" width="18" height="13" rx="2.2"/>
+          <path d="M3 10h18"/>
+          <path d="M7 14h3"/>
+        </svg>
+        <span class="tab-label">Cuentas</span>
+      </button>
+      <button type="button" class="tab" data-action="tab" data-tab="rules" id="tab-rules">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 7h10M9 12h10M9 17h10"/>
+          <path d="M4.5 7.2l1.2 1.2 2.2-2.4"/>
+          <path d="M4.5 12.2l1.2 1.2 2.2-2.4"/>
+          <path d="M4.5 17.2l1.2 1.2 2.2-2.4"/>
+        </svg>
+        <span class="tab-label">Reglas</span>
+      </button>
+    </nav>
+
+    <div class="backdrop" id="backdrop" hidden></div>
+    <div class="sheet" id="sheet" hidden>
+      <div class="sheet-handle"></div>
+      <div class="sheet-bar" id="sheetBar"></div>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+    <div class="backdrop" id="confirmBackdrop" hidden></div>
+    <div class="confirm" id="confirm" hidden></div>
+    <div class="viewer" id="viewer" hidden></div>
+    <div class="toast" id="toast" role="status"></div>
+  </div>
+  <script>
+(() => {
+  "use strict";
+
+  const STORAGE_KEY = "trading-journal-v1";
+  const DATA_VERSION = 2;
+  const MEDIA_DB_NAME = "trading-journal-media";
+  const MEDIA_STORE = "files";
+  const VIDEO_WARN_BYTES = 100 * 1024 * 1024;
+  const SYMBOLS = ["MNQ", "NQ", "MES", "ES"];
+  const EMOTIONS = [
+    { id: "tranquilo", label: "Tranquilo" },
+    { id: "ansioso", label: "Ansioso" },
+    { id: "fomo", label: "FOMO" },
+    { id: "venganza", label: "Venganza" },
+    { id: "euforico", label: "Eufórico" },
+    { id: "frustrado", label: "Frustrado" }
+  ];
+  const STATUSES = [
+    { id: "eval", label: "Evaluación" },
+    { id: "funded", label: "Fondeada" },
+    { id: "breached", label: "Breach" },
+    { id: "payout", label: "Payout" }
+  ];
+  const WEEKDAYS = ["L", "M", "X", "J", "V", "S", "D"];
+  const WEEKDAY_NAMES = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
+  const DEFAULT_RULES = [
+    "Una pérdida y fuera",
+    "Límite diario 1R",
+    "Objetivo cumplido, sesión terminada",
+    "Mismo tamaño siempre",
+    "10 minutos fuera tras una pérdida",
+    "Sin noticias de alto impacto (CPI, FOMC, NFP)",
+    "Sin planes especiales: mismo sistema y riesgo en todas las cuentas"
+  ];
+
+  const ICO = {
+    chevL: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+    chevR: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l5 5 9-10"/></svg>',
+    star: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.7 6.3 6.8.6-5.2 4.4 1.6 6.6L12 16.9 6.1 20.5l1.6-6.6L2.5 9.5l6.8-.6L12 2.6z"/></svg>',
+    pencil: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m1 0v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7"/></svg>'
+  };
+
+  let state = null;
+  let ui = {
+    tab: "dashboard",
+    accountFilter: "all",
+    tradeQuery: "",
+    tradeAccount: "all",
+    tradeSetup: "all",
+    tradeResult: "all",
+    month: null,
+    draft: null,
+    sheet: null,
+    toastTimer: null
+  };
+
+  function uid() {
+    return (crypto.randomUUID && crypto.randomUUID()) || ("id-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+  }
+
+  function esc(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[ch]));
+  }
+
+  function todayISO(date) {
+    const d = date || new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+
+  function nowTime() {
+    const d = new Date();
+    return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  }
+
+  function parseISODate(iso) {
+    const parts = (iso || "").split("-").map(Number);
+    if (!parts[0] || !parts[1] || !parts[2]) return new Date();
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+  }
+
+  function groupInt(intStr) {
+    return String(intStr).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  function formatNumber(n, digits) {
+    if (digits == null) digits = 2;
+    const num = Number(n);
+    if (!Number.isFinite(num)) return "\u2014";
+    const sign = num < 0 ? "\u2212" : "";
+    const abs = Math.abs(num);
+    const whole = digits === 0 || Number.isInteger(abs);
+    if (whole) return sign + groupInt(Math.round(abs));
+    const fixed = abs.toFixed(digits);
+    const parts = fixed.split(".");
+    return sign + groupInt(parts[0]) + "," + parts[1];
+  }
+
+  function fmtMoney(n, opts) {
+    opts = opts || {};
+    const sign = opts.sign !== false;
+    const abs = !!opts.abs;
+    const num = Number(n) || 0;
+    const value = abs ? Math.abs(num) : num;
+    const formatted = formatNumber(value, Number.isInteger(Math.abs(value)) ? 0 : 2).replace(/^\u2212/, "");
+    const suffix = "\u00a0$";
+    const body = (value < 0 ? "\u2212" : "") + formatted + suffix;
+    if (!sign) return body;
+    if (value > 0) return "+" + formatted + suffix;
+    if (value < 0) return "\u2212" + formatted + suffix;
+    return "0" + suffix;
+  }
+
+  function fmtNum(n, digits) {
+    if (digits == null) digits = 2;
+    if (n == null || !Number.isFinite(n)) return "\u2014";
+    return n.toLocaleString("es-ES", {
+      minimumFractionDigits: Number.isInteger(n) ? 0 : digits,
+      maximumFractionDigits: digits
+    });
+  }
+
+  function clsPnL(n) {
+    if (n > 0) return "up";
+    if (n < 0) return "down";
+    return "flat";
+  }
+
+  function parseAmount(raw) {
+    if (raw == null) return 0;
+    let s = String(raw).trim().replace(/\s/g, "").replace(/\$/g, "").replace("\u2212", "-").replace("\u2013", "-");
+    if (!s) return 0;
+    if (s.includes(",") && s.includes(".")) {
+      if (s.lastIndexOf(",") > s.lastIndexOf(".")) s = s.replace(/\./g, "").replace(",", ".");
+      else s = s.replace(/,/g, "");
+    } else if (s.includes(",")) {
+      s = s.replace(/\./g, "").replace(",", ".");
+    }
+    const n = parseFloat(s);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function compactPnL(n) {
+    const v = Math.abs(n);
+    const sign = n > 0 ? "+" : n < 0 ? "\u2212" : "";
+    if (v >= 1000) {
+      const k = v / 1000;
+      const digits = k >= 10 ? 0 : 1;
+      return sign + k.toFixed(digits).replace(".", ",") + "k";
+    }
+    return sign + String(Math.round(v));
+  }
+
+  function emotionLabel(id) {
+    const found = EMOTIONS.find((e) => e.id === id);
+    return found ? found.label : "";
+  }
+
+  function statusLabel(id) {
+    const found = STATUSES.find((s) => s.id === id);
+    return found ? found.label : id;
+  }
+
+  function accountById(id) {
+    return (state.accounts || []).find((a) => a.id === id) || null;
+  }
+
+  function tradeStamp(trade) {
+    return (trade.date || "") + "T" + (trade.time || "00:00");
+  }
+
+  function sortTrades(trades) {
+    return trades.slice().sort((a, b) => {
+      const c = tradeStamp(a).localeCompare(tradeStamp(b));
+      if (c !== 0) return c;
+      return (a.createdAt || "").localeCompare(b.createdAt || "");
+    });
+  }
+
+  function includedAccounts() {
+    return (state.accounts || []).filter((a) => !a.excludeFromStats);
+  }
+
+  function includedTrades(accountId) {
+    const source = (accountId && accountId !== "all")
+      ? state.accounts.filter((a) => a.id === accountId)
+      : includedAccounts();
+    const allowed = {};
+    source.forEach((a) => { allowed[a.id] = true; });
+    return (state.trades || []).filter((t) => allowed[t.accountId]);
+  }
+
+  /* ---------- IndexedDB media ---------- */
+
+  let mediaDbPromise = null;
+  const objectUrls = {};
+
+  function mediaReady() {
+    if (mediaDbPromise) return mediaDbPromise;
+    mediaDbPromise = new Promise(function (resolve, reject) {
+      if (!window.indexedDB) {
+        reject(new Error("IndexedDB no está disponible"));
+        return;
+      }
+      const req = indexedDB.open(MEDIA_DB_NAME, 1);
+      req.onupgradeneeded = function () {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(MEDIA_STORE)) {
+          db.createObjectStore(MEDIA_STORE, { keyPath: "id" });
+        }
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error); };
+    });
+    return mediaDbPromise;
+  }
+
+  function mediaTxn(mode, fn) {
+    return mediaReady().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        const tx = db.transaction(MEDIA_STORE, mode);
+        const store = tx.objectStore(MEDIA_STORE);
+        const result = fn(store);
+        tx.oncomplete = function () { resolve(result); };
+        tx.onerror = function () { reject(tx.error); };
+        tx.onabort = function () { reject(tx.error || new Error("abort")); };
+      });
+    });
+  }
+
+  function mediaPut(record) {
+    return mediaTxn("readwrite", function (store) { store.put(record); });
+  }
+
+  function mediaGet(id) {
+    return mediaReady().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        const tx = db.transaction(MEDIA_STORE, "readonly");
+        const req = tx.objectStore(MEDIA_STORE).get(id);
+        req.onsuccess = function () { resolve(req.result || null); };
+        req.onerror = function () { reject(req.error); };
+      });
+    });
+  }
+
+  function mediaDelete(id) {
+    if (objectUrls[id]) {
+      URL.revokeObjectURL(objectUrls[id]);
+      delete objectUrls[id];
+    }
+    return mediaTxn("readwrite", function (store) { store.delete(id); });
+  }
+
+  function mediaClear() {
+    Object.keys(objectUrls).forEach(function (id) {
+      URL.revokeObjectURL(objectUrls[id]);
+      delete objectUrls[id];
+    });
+    return mediaTxn("readwrite", function (store) { store.clear(); });
+  }
+
+  function cachedUrl(id, blob) {
+    if (!blob) return "";
+    if (objectUrls[id]) return objectUrls[id];
+    objectUrls[id] = URL.createObjectURL(blob);
+    return objectUrls[id];
+  }
+
+  function dataURLToBlob(dataURL) {
+    const parts = String(dataURL).split(",");
+    const mime = ((parts[0].match(/:(.*?);/) || [])[1]) || "image/jpeg";
+    const bin = atob(parts[1] || "");
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  }
+
+  function blobToDataURL(blob) {
+    return new Promise(function (resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function () { resolve(reader.result); };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function compressImageBlob(file, maxW, quality) {
+    if (!maxW) maxW = 720;
+    if (quality == null) quality = 0.7;
+    return new Promise(function (resolve, reject) {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = function () {
+        const scale = Math.min(1, maxW / img.width, 720 / img.height);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        if (canvas.toBlob) {
+          canvas.toBlob(function (blob) {
+            if (blob) resolve(blob);
+            else resolve(dataURLToBlob(canvas.toDataURL("image/jpeg", quality)));
+          }, "image/jpeg", quality);
+        } else {
+          resolve(dataURLToBlob(canvas.toDataURL("image/jpeg", quality)));
+        }
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error("image")); };
+      img.src = url;
+    });
+  }
+
+  function videoPoster(blob) {
+    return new Promise(function (resolve) {
+      const url = URL.createObjectURL(blob);
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.muted = true;
+      video.playsInline = true;
+      video.setAttribute("playsinline", "");
+      video.src = url;
+      let done = false;
+      const finish = function (thumb) {
+        if (done) return;
+        done = true;
+        URL.revokeObjectURL(url);
+        resolve(thumb || null);
+      };
+      video.onloadeddata = function () {
+        try {
+          const t = Math.min(0.25, (video.duration || 1) * 0.08);
+          video.currentTime = isFinite(t) ? t : 0;
+        } catch (err) { finish(null); }
+      };
+      video.onseeked = function () {
+        try {
+          const w = video.videoWidth || 320;
+          const h = video.videoHeight || 180;
+          const scale = Math.min(1, 360 / Math.max(w, h, 1));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.max(1, Math.round(w * scale));
+          canvas.height = Math.max(1, Math.round(h * scale));
+          canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(function (b) { finish(b); }, "image/jpeg", 0.7);
+        } catch (err) { finish(null); }
+      };
+      video.onerror = function () { finish(null); };
+      setTimeout(function () { finish(null); }, 5000);
+    });
+  }
+
+  function isVideoFile(file) {
+    const type = (file.type || "").toLowerCase();
+    const name = (file.name || "").toLowerCase();
+    return type.indexOf("video/") === 0 || /\.(mp4|mov|m4v|webm|avi|3gp|mkv)$/.test(name);
+  }
+
+  function isImageFile(file) {
+    const type = (file.type || "").toLowerCase();
+    const name = (file.name || "").toLowerCase();
+    return type.indexOf("image/") === 0 || /\.(jpe?g|png|gif|heic|heif|webp|bmp)$/.test(name);
+  }
+
+  function hasDailyLimit(account) {
+    if (!account) return false;
+    const v = account.dailyLossLimit;
+    if (v == null || v === "") return false;
+    return Number(v) > 0;
+  }
+
+  function parseOptionalAmount(raw) {
+    const s = String(raw == null ? "" : raw).trim();
+    if (!s) return null;
+    const n = parseAmount(s);
+    return n > 0 ? n : null;
+  }
+
+  function isUnchangedSeedAccount(acc) {
+    return acc &&
+      acc.name === "LucidPro 50K" &&
+      acc.firm === "Lucid Trading" &&
+      Number(acc.startBalance) === 50000 &&
+      Number(acc.targetBalance) === 53276 &&
+      Number(acc.mll) === 49656 &&
+      Number(acc.dailyLossLimit) === 1200;
+  }
+
+  function migrateState(data) {
+    const ver = Number(data.version) || 1;
+    if (ver < 2) {
+      (data.accounts || []).forEach(function (acc) {
+        if (isUnchangedSeedAccount(acc)) acc.dailyLossLimit = null;
+      });
+      data.version = 2;
+    }
+    (data.trades || []).forEach(function (t) {
+      if (!Array.isArray(t.media)) t.media = [];
+    });
+    return data;
+  }
+
+  function migrateLegacyScreenshots(data) {
+    const jobs = [];
+    (data.trades || []).forEach(function (trade) {
+      if (trade.screenshot && !(trade.media && trade.media.length)) {
+        jobs.push(Promise.resolve().then(function () {
+          const id = uid();
+          const blob = dataURLToBlob(trade.screenshot);
+          return mediaPut({
+            id: id,
+            blob: blob,
+            thumb: null,
+            kind: "image",
+            mime: blob.type || "image/jpeg",
+            size: blob.size,
+            name: "captura.jpg"
+          }).then(function () {
+            trade.media = [{ id: id, kind: "image", mime: blob.type || "image/jpeg", size: blob.size, name: "captura.jpg" }];
+            trade.screenshot = "";
+          });
+        }));
+      } else if (trade.screenshot && trade.media && trade.media.length) {
+        trade.screenshot = "";
+      }
+    });
+    return Promise.all(jobs);
+  }
+
+  function collectMediaIds(trades) {
+    const ids = [];
+    (trades || []).forEach(function (t) {
+      (t.media || []).forEach(function (m) { if (m && m.id) ids.push(m.id); });
+    });
+    return ids;
+  }
+
+  function seedState() {
+    const accountId = uid();
+    const trades = [
+      { date: "2026-11-10", time: "16:32", pnl: 1638 },
+      { date: "2026-11-12", time: "16:18", pnl: -928 },
+      { date: "2026-11-13", time: "16:41", pnl: 946 }
+    ].map((row) => ({
+      id: uid(),
+      accountId: accountId,
+      date: row.date,
+      time: row.time,
+      symbol: "NQ",
+      side: "long",
+      contracts: 1,
+      pnl: row.pnl,
+      setup: "Sin especificar",
+      followedRules: true,
+      emotion: "",
+      news: false,
+      notes: "",
+      screenshot: "",
+      media: [],
+      rating: 0,
+      createdAt: row.date + "T" + row.time + ":00"
+    }));
+    return {
+      version: DATA_VERSION,
+      accounts: [{
+        id: accountId,
+        name: "LucidPro 50K",
+        firm: "Lucid Trading",
+        size: 50000,
+        startBalance: 50000,
+        targetBalance: 53276,
+        mll: 49656,
+        dailyLossLimit: null,
+        status: "eval",
+        excludeFromStats: false
+      }],
+      trades: trades,
+      rules: DEFAULT_RULES.map((text) => ({ id: uid(), text: text })),
+      setups: ["Sin especificar"],
+      checkins: {},
+      settings: { hideInstallTip: false },
+      seededAt: "2026-11-10T16:00:00"
+    };
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return seedState();
+      const data = JSON.parse(raw);
+      if (!data || !Array.isArray(data.accounts) || !Array.isArray(data.trades)) return seedState();
+      data.rules = Array.isArray(data.rules) ? data.rules : seedState().rules;
+      data.setups = Array.isArray(data.setups) && data.setups.length ? data.setups : ["Sin especificar"];
+      data.checkins = data.checkins || {};
+      data.settings = data.settings || { hideInstallTip: false };
+      return migrateState(data);
+    } catch (err) {
+      console.warn("No se pudo leer el journal, se usan datos iniciales.", err);
+      return seedState();
+    }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (err) {
+      toast("No se pudo guardar el journal.");
+      console.warn(err);
+    }
+  }
+
+  function persist() {
+    saveState();
+    render();
+  }
+
+  function computeStats(trades) {
+    const list = sortTrades(trades);
+    const wins = list.filter((t) => t.pnl > 0);
+    const losses = list.filter((t) => t.pnl < 0);
+    const scratches = list.filter((t) => t.pnl === 0);
+    const grossWin = wins.reduce((s, t) => s + t.pnl, 0);
+    const grossLoss = losses.reduce((s, t) => s + t.pnl, 0);
+    const net = list.reduce((s, t) => s + t.pnl, 0);
+    const decided = wins.length + losses.length;
+    const avgWin = wins.length ? grossWin / wins.length : 0;
+    const avgLoss = losses.length ? grossLoss / losses.length : 0;
+    const avgLossAbs = Math.abs(avgLoss);
+    const profitFactor = grossLoss !== 0 ? Math.abs(grossWin / grossLoss) : (grossWin > 0 ? Infinity : 0);
+    const expectancy = list.length ? net / list.length : 0;
+    const winRate = decided ? wins.length / decided : 0;
+    const ratio = avgLossAbs ? avgWin / avgLossAbs : (avgWin > 0 ? Infinity : 0);
+    const best = list.reduce((a, t) => (!a || t.pnl > a.pnl ? t : a), null);
+    const worst = list.reduce((a, t) => (!a || t.pnl < a.pnl ? t : a), null);
+
+    let streak = 0;
+    let streakType = "flat";
+    if (list.length) {
+      const last = list[list.length - 1];
+      streakType = last.pnl > 0 ? "win" : last.pnl < 0 ? "loss" : "flat";
+      for (let i = list.length - 1; i >= 0; i--) {
+        const p = list[i].pnl;
+        if (streakType === "win" && p > 0) streak += 1;
+        else if (streakType === "loss" && p < 0) streak += 1;
+        else if (streakType === "flat" && p === 0) streak += 1;
+        else break;
+      }
+    }
+
+    const bySetup = {};
+    const byWeekday = [0, 0, 0, 0, 0, 0, 0];
+    const byDay = {};
+    let followedPnL = 0, brokenPnL = 0, followedN = 0, brokenN = 0;
+    const byEmotion = {};
+    let newsN = 0, newsPnL = 0;
+
+    list.forEach((t) => {
+      const setup = t.setup || "Sin especificar";
+      bySetup[setup] = (bySetup[setup] || 0) + t.pnl;
+      const wd = (parseISODate(t.date).getDay() + 6) % 7;
+      byWeekday[wd] += t.pnl;
+      byDay[t.date] = (byDay[t.date] || 0) + t.pnl;
+      if (t.followedRules === false) { brokenPnL += t.pnl; brokenN += 1; }
+      else { followedPnL += t.pnl; followedN += 1; }
+      if (t.emotion) {
+        if (!byEmotion[t.emotion]) byEmotion[t.emotion] = { n: 0, pnl: 0 };
+        byEmotion[t.emotion].n += 1;
+        byEmotion[t.emotion].pnl += t.pnl;
+      }
+      if (t.news) { newsN += 1; newsPnL += t.pnl; }
+    });
+
+    return {
+      list: list, wins: wins, losses: losses, scratches: scratches, net: net,
+      grossWin: grossWin, grossLoss: grossLoss, avgWin: avgWin, avgLoss: avgLoss,
+      avgLossAbs: avgLossAbs, profitFactor: profitFactor, expectancy: expectancy,
+      winRate: winRate, ratio: ratio, best: best, worst: worst, streak: streak,
+      streakType: streakType, count: list.length, bySetup: bySetup,
+      byWeekday: byWeekday, byDay: byDay, followedPnL: followedPnL,
+      brokenPnL: brokenPnL, followedN: followedN, brokenN: brokenN,
+      byEmotion: byEmotion, newsN: newsN, newsPnL: newsPnL, decided: decided
+    };
+  }
+
+  function accountMetrics(account) {
+    const trades = (state.trades || []).filter((t) => t.accountId === account.id);
+    const net = trades.reduce((s, t) => s + t.pnl, 0);
+    const current = (Number(account.startBalance) || 0) + net;
+    const target = Number(account.targetBalance) || 0;
+    const start = Number(account.startBalance) || 0;
+    const mll = Number(account.mll) || 0;
+    const span = target - start;
+    const progress = span > 0 ? Math.max(0, Math.min(1, (current - start) / span)) : (current >= target ? 1 : 0);
+    const toTarget = target - current;
+    const toMll = current - mll;
+    const today = todayISO();
+    const dailyPnL = trades.filter((t) => t.date === today).reduce((s, t) => s + t.pnl, 0);
+    const limited = hasDailyLimit(account);
+    const dailyLimit = limited ? Number(account.dailyLossLimit) : null;
+    const dailyUsed = dailyPnL < 0 ? -dailyPnL : 0;
+    return {
+      trades: trades, net: net, current: current, progress: progress,
+      toTarget: toTarget, toMll: toMll, dailyPnL: dailyPnL, dailyUsed: dailyUsed,
+      dailyLimit: dailyLimit,
+      dailyRemaining: limited ? dailyLimit - dailyUsed : null,
+      hasDailyLimit: limited
+    };
+  }
+
+  function firstLossBanners() {
+    const today = todayISO();
+    const banners = [];
+    (state.accounts || []).forEach((account) => {
+      if (account.status === "breached") return;
+      const metrics = accountMetrics(account);
+      if (metrics.hasDailyLimit && metrics.dailyUsed >= metrics.dailyLimit) {
+        banners.push({
+          kind: "stop",
+          title: "Límite diario alcanzado",
+          text: account.name + ": has llegado a " + fmtMoney(-metrics.dailyUsed, { sign: false }) + ". Cierra la plataforma."
+        });
+        return;
+      }
+      const todays = sortTrades((state.trades || []).filter((t) => t.accountId === account.id && t.date === today));
+      if (todays.length && todays[0].pnl < 0) {
+        banners.push({
+          kind: "stop",
+          title: "Una pérdida y fuera: cierra la plataforma",
+          text: "El primer trade de hoy en " + account.name + " cerró en " + fmtMoney(todays[0].pnl) + ". Mañana hay otra sesión; la cuenta sigue viva."
+        });
+      }
+    });
+    return banners;
+  }
+
+  function generateInsights(stats) {
+    const tips = [];
+    if (!stats.count) {
+      return [{ tone: "good", kicker: "Empezar", title: "El journal está listo", body: "Cuando cierres el primer trade, regístralo aquí. El dashboard se recalculará solo." }];
+    }
+
+    if (stats.avgLossAbs > stats.avgWin && stats.wins.length && stats.losses.length) {
+      const need = stats.avgLossAbs / (stats.avgWin + stats.avgLossAbs);
+      tips.push({
+        tone: "bad",
+        kicker: "Ratio",
+        title: "Recorta las pérdidas",
+        body: "Tu pérdida media (" + fmtMoney(stats.avgLossAbs, { sign: false, abs: true }) + ") es mayor que tu ganancia media (" + fmtMoney(stats.avgWin) + "). Con este ratio necesitarías acertar más del " + (need * 100).toLocaleString("es-ES", { maximumFractionDigits: 0 }) + " % solo para quedar en cero. El stop no se mueve."
+      });
+    } else if (stats.ratio >= 1.2 && stats.wins.length && stats.losses.length) {
+      tips.push({
+        tone: "good",
+        kicker: "Ratio",
+        title: "El riesgo-beneficio te acompaña",
+        body: "Ganas de media " + fmtNum(stats.ratio, 2) + " veces lo que pierdes. Mantén el mismo tamaño y no persigas el resultado del día."
+      });
+    }
+
+    const afterFirstLoss = { days: 0, extra: 0, pnl: 0, losses: 0 };
+    const byDayTrades = {};
+    stats.list.forEach((t) => {
+      (byDayTrades[t.date] || (byDayTrades[t.date] = [])).push(t);
+    });
+    Object.keys(byDayTrades).forEach((date) => {
+      const sorted = sortTrades(byDayTrades[date]);
+      const idx = sorted.findIndex((t) => t.pnl < 0);
+      if (idx >= 0 && idx < sorted.length - 1) {
+        const rest = sorted.slice(idx + 1);
+        afterFirstLoss.days += 1;
+        afterFirstLoss.extra += rest.length;
+        afterFirstLoss.pnl += rest.reduce((s, t) => s + t.pnl, 0);
+        afterFirstLoss.losses += rest.filter((t) => t.pnl < 0).length;
+      }
+    });
+    if (afterFirstLoss.days && afterFirstLoss.pnl < 0) {
+      tips.push({
+        tone: "bad",
+        kicker: "Venganza",
+        title: "El segundo trade te está costando caro",
+        body: "En " + afterFirstLoss.days + (afterFirstLoss.days === 1 ? " día" : " días") + " seguiste operando después de la primera pérdida. Esos trades extra suman " + fmtMoney(afterFirstLoss.pnl) + ". Una pérdida y fuera: mañana hay otra sesión."
+      });
+    } else if (afterFirstLoss.days === 0 && stats.losses.length) {
+      tips.push({
+        tone: "good",
+        kicker: "Disciplina",
+        title: "Estás respetando la primera pérdida",
+        body: "No hay rastro de revenge trading en el journal. Sigue cerrando la plataforma al primer rojo del día."
+      });
+    }
+
+    if (stats.brokenN) {
+      tips.push({
+        tone: "bad",
+        kicker: "Reglas",
+        title: "Saltar las reglas te cuesta dinero",
+        body: stats.brokenN + (stats.brokenN === 1 ? " trade fuera de reglas suma " : " trades fuera de reglas suman ") + fmtMoney(stats.brokenPnL) + ". Los que sí las cumpliste: " + fmtMoney(stats.followedPnL) + " (" + stats.followedN + "). La diferencia no es técnica, es disciplina."
+      });
+    }
+
+    if (stats.newsN) {
+      tips.push({
+        tone: stats.newsPnL < 0 ? "bad" : "warn",
+        kicker: "Noticias",
+        title: stats.newsPnL < 0 ? "Las noticias te están haciendo daño" : "Cuidado con operar noticias",
+        body: stats.newsN + (stats.newsN === 1 ? " trade en noticia suma " : " trades en noticia suman ") + fmtMoney(stats.newsPnL) + ". CPI, FOMC y NFP se quedan fuera: no es un método, es cara o cruz."
+      });
+    }
+
+    let worstEmotion = null;
+    Object.keys(stats.byEmotion).forEach((id) => {
+      const info = stats.byEmotion[id];
+      if (!worstEmotion || info.pnl < worstEmotion.pnl) worstEmotion = { id: id, n: info.n, pnl: info.pnl };
+    });
+    if (worstEmotion && worstEmotion.pnl < 0) {
+      tips.push({
+        tone: "warn",
+        kicker: "Emoción",
+        title: "Cuando operas " + emotionLabel(worstEmotion.id).toLowerCase() + ", pierdes",
+        body: worstEmotion.n + (worstEmotion.n === 1 ? " trade con esa emoción suma " : " trades con esa emoción suman ") + fmtMoney(worstEmotion.pnl) + ". Si aparece, espera diez minutos fuera de la pantalla antes de volver a entrar."
+      });
+    }
+
+    const OVER = 3;
+    let overDays = 0, overPnL = 0;
+    Object.keys(byDayTrades).forEach((date) => {
+      const list = byDayTrades[date];
+      if (list.length > OVER) {
+        overDays += 1;
+        overPnL += list.reduce((s, t) => s + t.pnl, 0);
+      }
+    });
+    if (overDays) {
+      tips.push({
+        tone: overPnL < 0 ? "bad" : "warn",
+        kicker: "Overtrading",
+        title: "Hay días con demasiados trades",
+        body: overDays + (overDays === 1 ? " día" : " días") + " con más de " + OVER + " operaciones suman " + fmtMoney(overPnL) + ". Menos entradas, mismas reglas, mejor espera."
+      });
+    }
+
+    if (stats.profitFactor >= 1.5 && stats.count >= 3) {
+      tips.push({
+        tone: "good",
+        kicker: "Sistema",
+        title: "El método está funcionando",
+        body: "Profit factor de " + (stats.profitFactor === Infinity ? "\u221e" : fmtNum(stats.profitFactor, 2)) + " con un win rate del " + (stats.winRate * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %. No lo aceleres. Protege la cuenta y el payout acaba llegando."
+      });
+    } else if (stats.profitFactor < 1 && stats.decided >= 3) {
+      tips.push({
+        tone: "bad",
+        kicker: "Expectativa",
+        title: "Ahora mismo el sistema no paga",
+        body: "Por cada dólar que pierdes, recuperas " + (stats.grossLoss ? fmtNum(Math.abs(stats.grossWin / stats.grossLoss), 2) : "0") + ". El trabajo no es acertar más: es dejar de agrandar las pérdidas."
+      });
+    }
+
+    if (!tips.length) {
+      tips.push({
+        tone: "good",
+        kicker: "Continúa",
+        title: "Sigue el plan, no el payout",
+        body: "Los números están en orden. Lo que tienes que proteger cada día es la cuenta."
+      });
+    }
+    return tips.slice(0, 5);
+  }
+
+  function isStandalone() {
+    return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  }
+
+  function metricCell(label, value, extraClass) {
+    return '<div class="metric"><div class="metric-label">' + esc(label) + '</div><div class="metric-value ' + (extraClass || "") + '">' + value + "</div></div>";
+  }
+
+  function equitySVG(trades) {
+    const w = 360, h = 150;
+    const sorted = sortTrades(trades);
+    if (!sorted.length) {
+      return '<div class="equity-wrap"><svg viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none"><text x="50%" y="50%" fill="#636366" font-size="12" text-anchor="middle">Sin datos todavía</text></svg></div>';
+    }
+    const values = [0];
+    sorted.forEach((t) => values.push(values[values.length - 1] + t.pnl));
+    const min = Math.min.apply(null, values);
+    const max = Math.max.apply(null, values);
+    const span = (max - min) || 1;
+    const padL = 8, padR = 44, padT = 18, padB = 16;
+    const coords = values.map((v, i) => {
+      const x = padL + (i / Math.max(1, values.length - 1)) * (w - padL - padR);
+      const y = padT + (1 - (v - min) / span) * (h - padT - padB);
+      return [x, y];
+    });
+    const d = coords.map((c, i) => (i ? "L" : "M") + c[0].toFixed(1) + " " + c[1].toFixed(1)).join(" ");
+    const lastPt = coords[coords.length - 1];
+    const area = d + " L " + lastPt[0].toFixed(1) + " " + (h - 4) + " L " + coords[0][0].toFixed(1) + " " + (h - 4) + " Z";
+    const last = values[values.length - 1];
+    const color = last > 0 ? "#30d158" : last < 0 ? "#ff453a" : "#8e8e93";
+    const soft = last > 0 ? "rgba(48,209,88,0.22)" : last < 0 ? "rgba(255,69,58,0.22)" : "rgba(142,142,147,0.16)";
+    let zero = "";
+    if (min < 0 && max > 0) {
+      const zy = padT + (1 - (0 - min) / span) * (h - padT - padB);
+      zero = '<line x1="' + padL + '" y1="' + zy.toFixed(1) + '" x2="' + (w - padR) + '" y2="' + zy.toFixed(1) + '" stroke="rgba(142,142,147,0.45)" stroke-width="0.8" stroke-dasharray="3 3"/>';
+    }
+    const labelY = Math.max(12, Math.min(h - 8, lastPt[1] + 4));
+    return '<div class="equity-wrap"><svg viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none" aria-label="Curva de equidad"><defs><linearGradient id="eqFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + soft + '"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></linearGradient></defs>' + zero + '<path d="' + area + '" fill="url(#eqFill)"/><path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/><circle cx="' + lastPt[0].toFixed(1) + '" cy="' + lastPt[1].toFixed(1) + '" r="3.2" fill="' + color + '"/><text x="' + Math.min(w - 4, lastPt[0] + 6).toFixed(1) + '" y="' + labelY.toFixed(1) + '" fill="' + color + '" font-size="10" font-weight="600" font-family="-apple-system, system-ui, sans-serif">' + esc(fmtMoney(last)) + "</text></svg></div>";
+  }
+
+  function calendarHTML(byDay, monthDate) {
+    const year = monthDate.getFullYear();
+    const month = monthDate.getMonth();
+    const first = new Date(year, month, 1);
+    const lead = (first.getDay() + 6) % 7;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const rawTitle = first.toLocaleDateString("es-ES", { month: "long", year: "numeric" });
+    const title = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1);
+    const today = todayISO();
+    const values = [];
+    for (let d = 1; d <= daysInMonth; d++) {
+      const iso = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+      if (byDay[iso] != null) values.push(Math.abs(byDay[iso]));
+    }
+    let cells = "";
+    for (let i = 0; i < lead; i++) cells += '<div class="cal-day empty"></div>';
+    for (let d = 1; d <= daysInMonth; d++) {
+      const iso = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+      const pnl = byDay[iso];
+      const isToday = iso === today;
+      let cls = "cal-day" + (isToday ? " today" : "");
+      let amount = "";
+      if (pnl != null) {
+        cls += " " + clsPnL(pnl);
+        amount = '<div class="cal-pnl">' + compactPnL(pnl) + "</div>";
+      }
+      cells += '<div class="' + cls + '"><div class="cal-num">' + d + "</div>" + amount + "</div>";
+    }
+    const prefix = year + "-" + String(month + 1).padStart(2, "0");
+    let monthNet = 0, monthDays = 0;
+    Object.keys(byDay).forEach((iso) => {
+      if (iso.indexOf(prefix) === 0) { monthNet += byDay[iso]; monthDays += 1; }
+    });
+    return '<div class="cal-nav"><button type="button" class="chev" data-action="month-prev" aria-label="Mes anterior">' + ICO.chevL + '</button><h3>' + esc(title) + '</h3><button type="button" class="chev" data-action="month-next" aria-label="Mes siguiente">' + ICO.chevR + '</button></div><div class="cal-grid">' + WEEKDAYS.map((d) => '<div class="cal-wd">' + d + "</div>").join("") + cells + '</div><div class="cal-legend"><span>' + monthDays + " día" + (monthDays === 1 ? "" : "s") + " operado" + (monthDays === 1 ? "" : "s") + '</span><span class="' + clsPnL(monthNet) + '">' + fmtMoney(monthNet) + "</span></div>";
+  }
+
+  function barList(entries, empty) {
+    if (!entries.length) return '<p class="muted" style="padding:4px 0 8px;font-size:14px">' + esc(empty) + "</p>";
+    const peak = Math.max(1, Math.max.apply(null, entries.map((e) => Math.abs(e.value))));
+    return entries.map((e) => {
+      const pct = Math.max(6, (Math.abs(e.value) / peak) * 100);
+      const c = clsPnL(e.value);
+      return '<div class="bar-row"><div class="bar-label">' + esc(e.label) + '</div><div class="bar-track"><div class="bar-fill ' + c + '" style="width:' + pct + '%"></div></div><div class="bar-val ' + c + '">' + fmtMoney(e.value) + "</div></div>";
+    }).join("");
+  }
+
+  function installTip() {
+    if (isStandalone() || (state.settings && state.settings.hideInstallTip)) return "";
+    return '<div class="banner tip" id="installTip"><div class="banner-body"><div class="banner-title">Añádela a tu iPhone</div><div class="banner-text">En Safari, pulsa el botón Compartir y elige <strong style="color:#fff;font-weight:590">Añadir a pantalla de inicio</strong>. Se abre como una app, también sin conexión.</div></div><button type="button" class="dismiss" data-action="hide-install" aria-label="Cerrar">Cerrar</button></div>';
+  }
+
+  function renderDashboard() {
+    const accountId = ui.accountFilter;
+    const trades = includedTrades(accountId);
+    const stats = computeStats(trades);
+    const monthDate = ui.month || new Date();
+    const tips = generateInsights(stats);
+    const banners = firstLossBanners();
+    const accounts = state.accounts || [];
+
+    const pf = stats.profitFactor === Infinity ? "\u221e" : (stats.count && stats.grossLoss === 0 && stats.grossWin === 0 ? "\u2014" : fmtNum(stats.profitFactor, 2));
+    const ratio = stats.ratio === Infinity ? "\u221e" : (stats.avgLossAbs || stats.avgWin ? fmtNum(stats.ratio, 2) : "\u2014");
+    const wr = stats.decided ? (stats.winRate * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %" : "\u2014";
+    const streakText = !stats.streak ? "\u2014" : (
+      stats.streakType === "win" ? stats.streak + " en verde" :
+      stats.streakType === "loss" ? stats.streak + " en rojo" : stats.streak + " en tablas"
+    );
+
+    const chips = '<div class="scroller"><button type="button" class="chip ' + (accountId === "all" ? "on" : "") + '" data-action="dash-account" data-id="all">Todas</button>' +
+      accounts.map((a) => '<button type="button" class="chip ' + (accountId === a.id ? "on" : "") + '" data-action="dash-account" data-id="' + esc(a.id) + '">' + esc(a.name) + (a.excludeFromStats ? " · off" : "") + "</button>").join("") + "</div>";
+
+    const setupEntries = Object.keys(stats.bySetup).map((label) => ({ label: label, value: stats.bySetup[label] }))
+      .sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+    const weekdayEntries = stats.byWeekday.map((value, i) => ({ label: WEEKDAY_NAMES[i], value: value })).filter((e) => e.value !== 0);
+
+    const bannerHTML = banners.map((b) => '<div class="banner ' + b.kind + '"><div class="banner-body"><div class="banner-title">' + esc(b.title) + '</div><div class="banner-text">' + esc(b.text) + "</div></div></div>").join("");
+    const tipsHTML = tips.map((t) => '<div class="insight"><div class="insight-kicker ' + (t.tone === "good" ? "good" : t.tone === "warn" ? "warn" : "bad") + '">' + esc(t.kicker) + '</div><div class="insight-title">' + esc(t.title) + '</div><div class="insight-body">' + esc(t.body) + "</div></div>").join("");
+
+    return '<div class="page"><h1 class="large-title">Resumen</h1><div class="hero"><div class="hero-pnl ' + clsPnL(stats.net) + '">' + fmtMoney(stats.net) + '</div><div class="hero-sub">' + stats.count + (stats.count === 1 ? " operación" : " operaciones") + " · " + (wr === "\u2014" ? "sin win rate aún" : wr + " aciertos") + "</div></div>" +
+      installTip() + bannerHTML + chips +
+      '<div class="metrics">' +
+        metricCell("Aciertos", wr) +
+        metricCell("Profit factor", pf) +
+        metricCell("Expectativa", fmtMoney(stats.expectancy), clsPnL(stats.expectancy) + (Math.abs(stats.expectancy) >= 1000 ? " sm" : "")) +
+        metricCell("Operaciones", String(stats.count)) +
+        metricCell("Ganancia media", stats.wins.length ? fmtMoney(stats.avgWin) : "\u2014", stats.wins.length ? "up sm" : "sm") +
+        metricCell("Pérdida media", stats.losses.length ? fmtMoney(stats.avgLoss) : "\u2014", stats.losses.length ? "down sm" : "sm") +
+        metricCell("Ratio G/P", ratio) +
+        metricCell("Racha actual", streakText, (stats.streakType === "win" ? "up sm" : stats.streakType === "loss" ? "down sm" : "sm")) +
+        metricCell("Mejor trade", stats.best ? fmtMoney(stats.best.pnl) : "\u2014", stats.best ? "up sm" : "sm") +
+        metricCell("Peor trade", stats.worst ? fmtMoney(stats.worst.pnl) : "\u2014", stats.worst ? "down sm" : "sm") +
+      '</div><section class="card"><div class="card-head"><div class="card-title">Curva de equidad</div><div class="card-meta">Acumulado</div></div>' + equitySVG(trades) +
+      '</section><section class="card"><div class="card-pad"><div class="card-title" style="margin-bottom:8px">Calendario</div>' + calendarHTML(stats.byDay, monthDate) +
+      '</div></section><section class="card"><div class="card-head"><div class="card-title">Cómo mejorar</div></div><div class="card-pad" style="padding-top:0">' + tipsHTML +
+      '</div></section><section class="card"><div class="card-head"><div class="card-title">Por setup</div></div><div class="card-pad" style="padding-top:0">' + barList(setupEntries, "Todavía no hay setups registrados.") +
+      '</div></section><section class="card"><div class="card-head"><div class="card-title">Por día de la semana</div></div><div class="card-pad" style="padding-top:0">' + barList(weekdayEntries, "Aún no hay suficientes sesiones.") +
+      '</div></section><section class="card"><div class="card-head"><div class="card-title">Cumplimiento de reglas</div></div><div class="card-pad" style="padding-top:4px"><div class="split"><div class="split-col"><div class="split-label">Con reglas</div><div class="split-val ' + clsPnL(stats.followedPnL) + '">' + fmtMoney(stats.followedPnL) + '</div><div class="split-meta">' + stats.followedN + " trade" + (stats.followedN === 1 ? "" : "s") + '</div></div><div class="split-col"><div class="split-label">Sin reglas</div><div class="split-val ' + clsPnL(stats.brokenPnL) + '">' + fmtMoney(stats.brokenPnL) + '</div><div class="split-meta">' + stats.brokenN + " trade" + (stats.brokenN === 1 ? "" : "s") + "</div></div></div></div></section></div>";
+  }
+
+  function filteredTrades() {
+    const q = (ui.tradeQuery || "").trim().toLowerCase();
+    return (state.trades || []).filter((t) => {
+      if (ui.tradeAccount !== "all" && t.accountId !== ui.tradeAccount) return false;
+      if (ui.tradeSetup !== "all" && (t.setup || "Sin especificar") !== ui.tradeSetup) return false;
+      if (ui.tradeResult === "win" && t.pnl <= 0) return false;
+      if (ui.tradeResult === "loss" && t.pnl >= 0) return false;
+      if (ui.tradeResult === "be" && t.pnl !== 0) return false;
+      if (q) {
+        const acc = accountById(t.accountId);
+        const blob = [t.symbol, t.setup, t.notes, t.side, t.emotion, acc && acc.name, acc && acc.firm].join(" ").toLowerCase();
+        if (blob.indexOf(q) === -1) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderTrades() {
+    const trades = sortTrades(filteredTrades()).reverse();
+    const setupsMap = {};
+    (state.setups || []).forEach((s) => { setupsMap[s] = true; });
+    (state.trades || []).forEach((t) => { setupsMap[t.setup || "Sin especificar"] = true; });
+    const setups = Object.keys(setupsMap);
+    const groups = [];
+    trades.forEach((t) => {
+      const last = groups[groups.length - 1];
+      if (!last || last.date !== t.date) groups.push({ date: t.date, items: [t] });
+      else last.items.push(t);
+    });
+
+    let list;
+    if (!groups.length) {
+      list = '<div class="empty"><h3>Sin operaciones</h3><p>Pulsa el botón + para registrar el primer trade.</p></div>';
+    } else {
+      list = groups.map((g) => {
+        const total = g.items.reduce((s, t) => s + t.pnl, 0);
+        const label = parseISODate(g.date).toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "short" });
+        const rows = g.items.map((t) => {
+          const acc = accountById(t.accountId);
+          const flags = (t.followedRules === false ? '<span class="flag bad">Sin reglas</span>' : "") +
+            (t.news ? '<span class="flag news">Noticia</span>' : "") +
+            (t.emotion ? '<span class="flag">' + esc(emotionLabel(t.emotion)) + "</span>" : "") +
+            mediaFlagHTML(t);
+          return '<button type="button" class="trade" data-action="edit-trade" data-id="' + esc(t.id) + '"><span class="side-dot ' + (t.side === "short" ? "short" : "long") + '"></span><div class="trade-main"><div class="trade-top"><div class="trade-sym">' + esc(t.symbol || "\u2014") + ' <span class="muted" style="font-weight:500;font-size:13px">' + (t.side === "short" ? "Short" : "Long") + " · " + (t.contracts || 1) + '</span></div><div class="trade-pnl ' + clsPnL(t.pnl) + '">' + fmtMoney(t.pnl) + '</div></div><div class="trade-sub">' + esc((acc && acc.name) || "Sin cuenta") + " · " + esc(t.setup || "Sin especificar") + " · " + esc(t.time || "") + "</div>" + (flags ? '<div class="trade-flags">' + flags + "</div>" : "") + "</div></button>";
+        }).join("");
+        return '<div class="day-group"><div class="day-head"><div class="day-title">' + esc(label) + '</div><div class="day-total ' + clsPnL(total) + '">' + fmtMoney(total) + "</div></div>" + rows + "</div>";
+      }).join("");
+    }
+
+    return '<div class="page"><h1 class="large-title">Operaciones</h1><div class="search-wrap"><input class="search" type="search" id="tradeSearch" placeholder="Buscar símbolo, setup, cuenta\u2026" value="' + esc(ui.tradeQuery) + '" autocomplete="off"></div>' +
+      '<div class="scroller"><button type="button" class="chip ' + (ui.tradeResult === "all" ? "on" : "") + '" data-action="filter-result" data-id="all">Todos</button><button type="button" class="chip ' + (ui.tradeResult === "win" ? "on" : "") + '" data-action="filter-result" data-id="win">Ganadores</button><button type="button" class="chip ' + (ui.tradeResult === "loss" ? "on" : "") + '" data-action="filter-result" data-id="loss">Perdedores</button></div>' +
+      '<div class="scroller" style="padding-top:0"><button type="button" class="chip ' + (ui.tradeAccount === "all" ? "on" : "") + '" data-action="filter-account" data-id="all">Todas las cuentas</button>' +
+      (state.accounts || []).map((a) => '<button type="button" class="chip ' + (ui.tradeAccount === a.id ? "on" : "") + '" data-action="filter-account" data-id="' + esc(a.id) + '">' + esc(a.name) + "</button>").join("") + "</div>" +
+      '<div class="scroller" style="padding-top:0"><button type="button" class="chip ' + (ui.tradeSetup === "all" ? "on" : "") + '" data-action="filter-setup" data-id="all">Todos los setups</button>' +
+      setups.map((s) => '<button type="button" class="chip ' + (ui.tradeSetup === s ? "on" : "") + '" data-action="filter-setup" data-id="' + esc(s) + '">' + esc(s) + "</button>").join("") + "</div>" +
+      list + "</div>";
+  }
+
+  function renderAccounts() {
+    const cards = (state.accounts || []).map((account) => {
+      const m = accountMetrics(account);
+      const progressCls = m.toMll <= 0 ? "danger" : "";
+      return '<article class="card acct" data-action="edit-account" data-id="' + esc(account.id) + '"><div class="acct-top"><div><div class="acct-name">' + esc(account.name) + '</div><div class="acct-firm">' + esc(account.firm || "\u2014") + " · " + (Number(account.size || account.startBalance) || 0).toLocaleString("es-ES") + ' $</div></div><span class="status ' + esc(account.status || "eval") + '">' + esc(statusLabel(account.status || "eval")) + '</span></div><div class="acct-bal">' + fmtMoney(m.current, { sign: false }) + '</div><div class="progress ' + progressCls + '"><span style="width:' + (m.progress * 100).toFixed(1) + '%"></span></div><div class="acct-stats"><div><div class="acct-stat-label">Objetivo</div><div class="acct-stat-val">' + fmtMoney(account.targetBalance, { sign: false }) + '</div></div><div><div class="acct-stat-label">' + (m.toTarget <= 0 ? "Objetivo" : "Para el objetivo") + '</div><div class="acct-stat-val" style="' + (m.toTarget <= 0 ? "color:var(--green)" : "") + '">' + (m.toTarget <= 0 ? "Alcanzado" : fmtMoney(m.toTarget, { sign: false })) + '</div></div><div><div class="acct-stat-label">Colchón hasta el MLL</div><div class="acct-stat-val" style="color:' + (m.toMll <= 0 ? "var(--red)" : "inherit") + '">' + fmtMoney(m.toMll, { sign: false }) + '</div></div><div><div class="acct-stat-label">Límite diario</div><div class="acct-stat-val">' + (m.hasDailyLimit ? (m.dailyPnL < 0 ? fmtMoney(m.dailyRemaining, { sign: false }) + " resto" : fmtMoney(account.dailyLossLimit, { sign: false })) : "Sin límite diario") + '</div></div></div><div class="toggle-row" data-action="noop"><span>Excluir de estadísticas</span><label class="switch"><input type="checkbox" data-action="toggle-exclude" data-id="' + esc(account.id) + '"' + (account.excludeFromStats ? " checked" : "") + '><span></span></label></div></article>';
+    }).join("");
+
+    return '<div class="page"><h1 class="large-title">Cuentas</h1>' + (cards || '<div class="empty"><h3>Sin cuentas</h3><p>Añade la primera cuenta de fondeo para empezar a registrar.</p></div>') + '<button type="button" class="add-row" data-action="new-account">+ Nueva cuenta</button></div>';
+  }
+
+  function renderRules() {
+    const today = todayISO();
+    const checks = (state.checkins && state.checkins[today]) || {};
+    const rules = state.rules || [];
+    const done = rules.length && rules.every((r) => checks[r.id]);
+    const list = rules.map((r, i) => '<div class="rule"><div class="rule-num">' + (i + 1) + '</div><div class="rule-text">' + esc(r.text) + '</div><div class="rule-actions"><button type="button" class="ghost" data-action="edit-rule" data-id="' + esc(r.id) + '" aria-label="Editar">' + ICO.pencil + '</button><button type="button" class="ghost danger" data-action="delete-rule" data-id="' + esc(r.id) + '" aria-label="Eliminar">' + ICO.trash + "</button></div></div>").join("");
+    const checklist = rules.map((r) => '<button type="button" class="check ' + (checks[r.id] ? "on" : "") + '" data-action="toggle-check" data-id="' + esc(r.id) + '"><span class="box">' + ICO.check + '</span><span class="check-text">' + esc(r.text) + "</span></button>").join("");
+
+    return '<div class="page"><h1 class="large-title">Reglas</h1><p class="hint" style="padding:0 20px 12px">Las decides antes de abrir el gráfico. No se negocian a mitad de sesión.</p><div class="card">' + (list || '<div class="empty"><p>Añade tu primera regla.</p></div>') + '</div><button type="button" class="add-row" data-action="new-rule">+ Nueva regla</button><div class="card"><div class="card-head"><div class="card-title">Check-in de hoy</div><div class="card-meta">' + parseISODate(today).toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" }) + "</div></div>" + (checklist || '<div class="card-pad muted">Añade reglas para usarlo como lista previa.</div>') + (done ? '<div class="banner ok" style="margin:8px 12px 12px"><div class="banner-body"><div class="banner-title">Listo para la sesión</div><div class="banner-text">Has confirmado todas las reglas de hoy. Ahora cúmplelas.</div></div></div>' : "") + "</div></div>";
+  }
+
+  const TITLES = { dashboard: "Resumen", trades: "Operaciones", accounts: "Cuentas", rules: "Reglas" };
+
+  function render() {
+    const content = document.getElementById("content");
+    const scroll = content.scrollTop;
+    let html = "";
+    if (ui.tab === "dashboard") html = renderDashboard();
+    else if (ui.tab === "trades") html = renderTrades();
+    else if (ui.tab === "accounts") html = renderAccounts();
+    else html = renderRules();
+    content.innerHTML = html;
+    document.getElementById("compactTitle").textContent = TITLES[ui.tab] || "Journal";
+    document.querySelectorAll(".tab[data-tab]").forEach((el) => {
+      el.classList.toggle("on", el.dataset.tab === ui.tab);
+    });
+    content.scrollTop = ui._keepScroll ? scroll : 0;
+    ui._keepScroll = false;
+    updateTopbar();
+    if (ui.tab === "trades") {
+      const search = document.getElementById("tradeSearch");
+      if (search) {
+        search.addEventListener("input", (e) => {
+          ui.tradeQuery = e.target.value;
+          ui._keepScroll = true;
+          const pos = e.target.selectionStart;
+          render();
+          const again = document.getElementById("tradeSearch");
+          if (again) { again.focus(); again.setSelectionRange(pos, pos); }
+        });
+      }
+    }
+  }
+
+  function updateTopbar() {
+    const content = document.getElementById("content");
+    document.getElementById("topbar").classList.toggle("scrolled", content.scrollTop > 28);
+  }
+
+  function openSheet(kind, title, body, opts) {
+    opts = opts || {};
+    const saveLabel = opts.saveLabel || "Guardar";
+    ui.sheet = kind;
+    const bar = document.getElementById("sheetBar");
+    const bodyEl = document.getElementById("sheetBody");
+    const sheet = document.getElementById("sheet");
+    const backdrop = document.getElementById("backdrop");
+    bar.innerHTML = '<button type="button" class="sheet-link" data-action="close-sheet">Cancelar</button><h2>' + esc(title) + '</h2><button type="button" class="sheet-link strong" data-action="save-sheet">' + esc(saveLabel) + "</button>";
+    bodyEl.innerHTML = body;
+    backdrop.hidden = false;
+    sheet.hidden = false;
+    requestAnimationFrame(() => {
+      backdrop.classList.add("on");
+      sheet.classList.add("on");
+    });
+  }
+
+  function closeSheet() {
+    if (ui.sheet === "trade" && ui.draft && !ui.draftCommitted) {
+      discardDraftMedia(ui.draft);
+    }
+    const sheet = document.getElementById("sheet");
+    const backdrop = document.getElementById("backdrop");
+    sheet.classList.remove("on");
+    backdrop.classList.remove("on");
+    ui.sheet = null;
+    ui.draft = null;
+    ui.draftCommitted = false;
+    setTimeout(() => {
+      if (!sheet.classList.contains("on")) {
+        sheet.hidden = true;
+        backdrop.hidden = true;
+        document.getElementById("sheetBody").innerHTML = "";
+      }
+    }, 420);
+  }
+
+  function collectTradeDraft() {
+    const d = ui.draft;
+    if (!d) return;
+    const dateEl = document.getElementById("f-date");
+    const timeEl = document.getElementById("f-time");
+    const accEl = document.getElementById("f-account");
+    const contractsEl = document.getElementById("f-contracts");
+    const amountEl = document.getElementById("f-amount");
+    const notesEl = document.getElementById("f-notes");
+    const customSym = document.getElementById("f-custom-symbol");
+    const customSetup = document.getElementById("f-custom-setup");
+    if (dateEl) d.date = dateEl.value;
+    if (timeEl) d.time = timeEl.value;
+    if (accEl) d.accountId = accEl.value;
+    if (contractsEl) d.contracts = Math.max(1, parseInt(contractsEl.value, 10) || 1);
+    if (amountEl) {
+      const amt = Math.abs(parseAmount(amountEl.value));
+      d.pnl = (d.sign === "neg" ? -1 : 1) * amt;
+    }
+    if (notesEl) d.notes = notesEl.value;
+    if (d.symbol === "__custom" && customSym) d.symbolCustom = customSym.value.trim();
+    if (d.setup === "__custom" && customSetup) d.setupCustom = customSetup.value.trim();
+  }
+
+  function tradeSheetBody(d) {
+    const customSym = d.symbol === "__custom" || (d.symbol && SYMBOLS.indexOf(d.symbol) === -1 && d.symbol !== "");
+    const knownSetups = state.setups || [];
+    const customSetup = d.setup === "__custom" || (d.setup && knownSetups.indexOf(d.setup) === -1);
+    const sign = d.sign || (d.pnl < 0 ? "neg" : "pos");
+    const amount = Math.abs(Number(d.pnl) || 0);
+    const amountText = amount ? String(amount) : "";
+    const symbolChips = SYMBOLS.map((s) => '<button type="button" class="chip ' + (d.symbol === s ? "on" : "") + '" data-action="draft-symbol" data-id="' + s + '">' + s + "</button>").join("") +
+      '<button type="button" class="chip ' + (customSym ? "on" : "") + '" data-action="draft-symbol" data-id="__custom">Otro</button>';
+    const setupChips = knownSetups.map((s) => '<button type="button" class="chip ' + (!customSetup && d.setup === s ? "on" : "") + '" data-action="draft-setup" data-id="' + esc(s) + '">' + esc(s) + "</button>").join("") +
+      '<button type="button" class="chip ' + (customSetup ? "on" : "") + '" data-action="draft-setup" data-id="__custom">Nuevo</button>';
+    const stars = [1,2,3,4,5].map((n) => '<button type="button" class="star ' + (d.rating >= n ? "on" : "") + '" data-action="draft-rating" data-id="' + n + '" aria-label="' + n + ' de 5">' + ICO.star + "</button>").join("");
+    const emotionChips = EMOTIONS.map((e) => '<button type="button" class="chip ' + (d.emotion === e.id ? "on" : "") + '" data-action="draft-emotion" data-id="' + e.id + '">' + e.label + "</button>").join("");
+    const accountOpts = (state.accounts || []).map((a) => '<option value="' + esc(a.id) + '"' + (a.id === d.accountId ? " selected" : "") + ">" + esc(a.name) + "</option>").join("");
+    const mediaBlock = mediaGridHTML(d.media || [], true);
+
+    return '<div class="pnl-hero"><div class="lbl">Resultado</div><input id="f-amount" inputmode="decimal" enterkeyhint="done" placeholder="0" value="' + esc(amountText) + '" class="' + (sign === "neg" ? "down" : amount ? "up" : "") + '" aria-label="Resultado en dólares"><div class="sign-row"><div class="segmented signed"><button type="button" class="' + (sign === "pos" ? "on pos" : "") + '" data-action="draft-sign" data-id="pos">+</button><button type="button" class="' + (sign === "neg" ? "on neg" : "") + '" data-action="draft-sign" data-id="neg">\u2212</button></div></div></div>' +
+      '<div class="group"><label class="row"><span class="row-label">Cuenta</span><select id="f-account" class="row-field">' + accountOpts + '</select></label><label class="row"><span class="row-label">Fecha</span><input id="f-date" type="date" value="' + esc(d.date || todayISO()) + '"></label><label class="row"><span class="row-label">Hora</span><input id="f-time" type="time" value="' + esc(d.time || nowTime()) + '"></label><label class="row"><span class="row-label">Contratos</span><input id="f-contracts" type="number" min="1" step="1" inputmode="numeric" value="' + esc(d.contracts || 1) + '"></label></div>' +
+      '<p class="hint">Símbolo</p><div class="chip-wrap" style="margin-bottom:12px">' + symbolChips + "</div>" +
+      (customSym ? '<div class="group"><label class="row"><span class="row-label">Símbolo</span><input id="f-custom-symbol" type="text" value="' + esc(d.symbolCustom || (SYMBOLS.indexOf(d.symbol) === -1 ? d.symbol : "") || "") + '" placeholder="MES, M2K\u2026"></label></div>' : "") +
+      '<p class="hint">Dirección</p><div class="segmented" style="margin-bottom:16px"><button type="button" class="' + (d.side !== "short" ? "on" : "") + '" data-action="draft-side" data-id="long">Long</button><button type="button" class="' + (d.side === "short" ? "on" : "") + '" data-action="draft-side" data-id="short">Short</button></div>' +
+      '<p class="hint">Setup</p><div class="chip-wrap" style="margin-bottom:12px">' + setupChips + "</div>" +
+      (customSetup ? '<div class="group"><label class="row"><span class="row-label">Setup</span><input id="f-custom-setup" type="text" value="' + esc(d.setupCustom || (knownSetups.indexOf(d.setup) === -1 ? d.setup : "") || "") + '" placeholder="Ruptura de rango\u2026"></label></div>' : "") +
+      '<div class="group"><div class="row wrap"><span class="row-label">\u00bfReglas?</span><div class="segmented"><button type="button" class="' + (d.followedRules !== false ? "on" : "") + '" data-action="draft-rules" data-id="yes">Sí</button><button type="button" class="' + (d.followedRules === false ? "on" : "") + '" data-action="draft-rules" data-id="no">No</button></div></div><div class="row wrap"><span class="row-label">Noticia</span><div class="segmented"><button type="button" class="' + (!d.news ? "on" : "") + '" data-action="draft-news" data-id="no">No</button><button type="button" class="' + (d.news ? "on" : "") + '" data-action="draft-news" data-id="yes">Sí</button></div></div><div class="row wrap"><span class="row-label">Ejecución</span><div class="stars" role="radiogroup" aria-label="Nota de ejecución">' + stars + "</div></div></div>" +
+      '<p class="hint">Emoción</p><div class="chip-wrap" style="margin-bottom:16px">' + emotionChips + "</div>" +
+      '<div class="group"><div class="row-note"><textarea id="f-notes" placeholder="Notas de la operación\u2026">' + esc(d.notes || "") + "</textarea></div></div>" +
+      '<p class="hint">Fotos y vídeos</p>' + mediaBlock +
+      '<input id="f-shot" type="file" accept="image/*,video/*" multiple hidden>' +
+      (d.id ? '<button type="button" class="destructive" data-action="delete-trade" data-id="' + esc(d.id) + '">Eliminar trade</button>' : "");
+  }
+
+  function mediaFlagHTML(t) {
+    const items = t.media || [];
+    const photos = items.filter(function (m) { return m.kind === "image"; }).length + ((t.screenshot && !items.length) ? 1 : 0);
+    const videos = items.filter(function (m) { return m.kind === "video"; }).length;
+    if (!photos && !videos) return "";
+    let label;
+    if (photos && videos) label = (photos + videos) + " adjuntos";
+    else if (videos) label = videos === 1 ? "1 vídeo" : videos + " vídeos";
+    else label = photos === 1 ? "1 foto" : photos + " fotos";
+    return '<span class="flag">' + esc(label) + "</span>";
+  }
+
+  function mediaGridHTML(items, removable) {
+    const tiles = (items || []).map(function (m) {
+      const warn = m.kind === "video" && m.size > VIDEO_WARN_BYTES;
+      return '<div class="media-tile" data-media-id="' + esc(m.id) + '"><button type="button" class="media-open" data-action="view-media" data-id="' + esc(m.id) + '" aria-label="' + (m.kind === "video" ? "Ver vídeo" : "Ver foto") + '"><span class="media-ph"></span>' +
+        (m.kind === "video" ? '<span class="play-badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5L8 5.5z"/></svg></span>' : "") +
+        "</button>" +
+        (removable ? '<button type="button" class="media-x" data-action="remove-media" data-id="' + esc(m.id) + '" aria-label="Quitar">&times;</button>' : "") +
+        (warn ? '<div class="media-warn">Más de 100 MB</div>' : "") +
+        "</div>";
+    }).join("");
+    const add = removable ? '<button type="button" class="media-add" data-action="draft-shot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 15l5-4 4 3 3-2 6 5"/><circle cx="8.5" cy="9" r="1.2"/></svg><span>Añadir</span></button>' : "";
+    const hasBig = (items || []).some(function (m) { return m.kind === "video" && m.size > VIDEO_WARN_BYTES; });
+    const note = hasBig ? '<p class="hint">Hay un vídeo de más de 100 MB. Puede ocupar bastante espacio en el iPhone.</p>' : '<p class="hint">Las fotos se comprimen. Los vídeos se quedan en el teléfono y no entran en la copia JSON.</p>';
+    return '<div class="media-grid">' + tiles + add + "</div>" + note;
+  }
+
+  function hydrateMediaTiles(root) {
+    const scope = root || document;
+    const tiles = scope.querySelectorAll(".media-tile[data-media-id]");
+    tiles.forEach(function (tile) {
+      const id = tile.getAttribute("data-media-id");
+      mediaGet(id).then(function (rec) {
+        if (!rec || !tile.isConnected) return;
+        const src = rec.thumb || (rec.kind === "image" ? rec.blob : null);
+        const ph = tile.querySelector(".media-ph");
+        if (src && ph) {
+          const img = document.createElement("img");
+          img.alt = rec.kind === "video" ? "Vídeo" : "Foto";
+          img.src = cachedUrl(id + "-thumb", src);
+          ph.replaceWith(img);
+        }
+      }).catch(function (err) { console.warn(err); });
+    });
+  }
+
+  function refreshTradeSheet() {
+    collectTradeDraft();
+    document.getElementById("sheetBody").innerHTML = tradeSheetBody(ui.draft);
+    bindShotInput();
+    hydrateMediaTiles(document.getElementById("sheetBody"));
+  }
+
+  function bindShotInput() {
+    const input = document.getElementById("f-shot");
+    if (!input) return;
+    input.addEventListener("change", function (e) {
+      const files = e.target.files;
+      if (!files || !files.length) return;
+      addMediaFiles(files).finally(function () {
+        input.value = "";
+      });
+    });
+  }
+
+  function discardDraftMedia(draft) {
+    (draft.newMediaIds || []).forEach(function (id) {
+      mediaDelete(id).catch(function (err) { console.warn(err); });
+    });
+  }
+
+  function addMediaFiles(fileList) {
+    const files = Array.prototype.slice.call(fileList || []);
+    if (!files.length || !ui.draft) return Promise.resolve();
+    collectTradeDraft();
+    ui.draft.media = ui.draft.media || [];
+    ui.draft.newMediaIds = ui.draft.newMediaIds || [];
+    let warned = false;
+    let chain = Promise.resolve();
+    files.forEach(function (file) {
+      chain = chain.then(function () {
+        const video = isVideoFile(file);
+        const image = isImageFile(file);
+        if (!video && !image) {
+          toast("Solo se pueden añadir fotos o vídeos.");
+          return;
+        }
+        if (video && file.size > VIDEO_WARN_BYTES) warned = true;
+        const id = uid();
+        const job = video
+          ? videoPoster(file).then(function (thumb) {
+              return mediaPut({
+                id: id,
+                blob: file,
+                thumb: thumb,
+                kind: "video",
+                mime: file.type || "video/mp4",
+                size: file.size,
+                name: file.name || "video"
+              }).then(function () { return { kind: "video", mime: file.type || "video/mp4", size: file.size, name: file.name || "video" }; });
+            })
+          : compressImageBlob(file).then(function (blob) {
+              return mediaPut({
+                id: id,
+                blob: blob,
+                thumb: null,
+                kind: "image",
+                mime: "image/jpeg",
+                size: blob.size,
+                name: file.name || "foto.jpg"
+              }).then(function () { return { kind: "image", mime: "image/jpeg", size: blob.size, name: file.name || "foto.jpg" }; });
+            });
+        return job.then(function (meta) {
+          if (!ui.draft) return;
+          ui.draft.media = ui.draft.media.concat([{ id: id, kind: meta.kind, mime: meta.mime, size: meta.size, name: meta.name }]);
+          ui.draft.newMediaIds = ui.draft.newMediaIds.concat([id]);
+        });
+      }).catch(function (err) {
+        console.warn(err);
+        toast("No se pudo guardar un archivo. ¿Hay espacio en el iPhone?");
+      });
+    });
+    return chain.then(function () {
+      if (warned) toast("Hay un vídeo de más de 100 MB. Puede ocupar bastante espacio.");
+      if (ui.draft) refreshTradeSheet();
+    });
+  }
+
+  function removeDraftMedia(id) {
+    if (!ui.draft) return;
+    collectTradeDraft();
+    ui.draft.media = (ui.draft.media || []).filter(function (m) { return m.id !== id; });
+    const isNew = (ui.draft.newMediaIds || []).indexOf(id) !== -1;
+    if (isNew) {
+      ui.draft.newMediaIds = ui.draft.newMediaIds.filter(function (x) { return x !== id; });
+      mediaDelete(id).catch(function (err) { console.warn(err); });
+    } else {
+      ui.draft.removedMedia = (ui.draft.removedMedia || []).concat([id]);
+    }
+    refreshTradeSheet();
+  }
+
+  function closeViewer() {
+    const viewer = document.getElementById("viewer");
+    const video = viewer.querySelector("video");
+    if (video) {
+      try { video.pause(); } catch (err) {}
+    }
+    if (ui.viewerUrl) {
+      URL.revokeObjectURL(ui.viewerUrl);
+      ui.viewerUrl = null;
+    }
+    viewer.classList.remove("on");
+    setTimeout(function () {
+      if (!viewer.classList.contains("on")) {
+        viewer.hidden = true;
+        viewer.innerHTML = "";
+      }
+    }, 260);
+  }
+
+  function openViewer(id) {
+    const items = (ui.draft && ui.draft.media) ? ui.draft.media : (ui.viewerList || []);
+    const idx = items.findIndex(function (m) { return m.id === id; });
+    const meta = idx >= 0 ? items[idx] : { id: id };
+    mediaGet(id).then(function (rec) {
+      if (!rec || !rec.blob) { toast("No se pudo abrir el archivo."); return; }
+      if (ui.viewerUrl) URL.revokeObjectURL(ui.viewerUrl);
+      const url = URL.createObjectURL(rec.blob);
+      ui.viewerUrl = url;
+      const kind = meta.kind || rec.kind;
+      const isVideo = kind === "video";
+      const viewer = document.getElementById("viewer");
+      const prev = idx > 0 ? items[idx - 1] : null;
+      const next = idx >= 0 && idx < items.length - 1 ? items[idx + 1] : null;
+      viewer.hidden = false;
+      viewer.innerHTML = '<div class="viewer-bar"><button type="button" data-action="close-viewer">Cerrar</button><div class="viewer-title">' +
+        (isVideo ? "Vídeo" : "Foto") + (items.length > 1 && idx >= 0 ? " · " + (idx + 1) + " de " + items.length : "") +
+        '</div><span style="min-width:64px;text-align:right">' +
+        (prev ? '<button type="button" data-action="view-media" data-id="' + esc(prev.id) + '">Anterior</button>' : "") +
+        (next ? '<button type="button" data-action="view-media" data-id="' + esc(next.id) + '">Siguiente</button>' : "") +
+        '</span></div><div class="viewer-stage">' +
+        (isVideo
+          ? '<video src="' + url + '" controls playsinline webkit-playsinline></video>'
+          : '<img src="' + url + '" alt="Foto del trade">') +
+        "</div>";
+      requestAnimationFrame(function () { viewer.classList.add("on"); });
+    }).catch(function (err) {
+      console.warn(err);
+      toast("No se pudo abrir el archivo.");
+    });
+  }
+
+
+  function openTradeSheet(id) {
+    const existing = id && (state.trades || []).find((t) => t.id === id);
+    if (existing) {
+      ui.draft = Object.assign({}, existing, {
+        sign: existing.pnl < 0 ? "neg" : "pos",
+        symbolCustom: SYMBOLS.indexOf(existing.symbol) !== -1 ? "" : existing.symbol,
+        setupCustom: (state.setups || []).indexOf(existing.setup) !== -1 ? "" : existing.setup,
+        media: (existing.media || []).slice(),
+        newMediaIds: [],
+        removedMedia: []
+      });
+    } else {
+      const defaultAccount = (ui.accountFilter !== "all" && accountById(ui.accountFilter))
+        ? ui.accountFilter
+        : ((state.accounts[0] && state.accounts[0].id) || "");
+      ui.draft = {
+        id: null,
+        accountId: defaultAccount,
+        date: todayISO(),
+        time: nowTime(),
+        symbol: "NQ",
+        side: "long",
+        contracts: 1,
+        pnl: 0,
+        sign: "pos",
+        setup: "Sin especificar",
+        followedRules: true,
+        emotion: "",
+        news: false,
+        notes: "",
+        screenshot: "",
+        media: [],
+        newMediaIds: [],
+        removedMedia: [],
+        rating: 0
+      };
+    }
+    ui.draftCommitted = false;
+    openSheet("trade", existing ? "Editar trade" : "Nuevo trade", tradeSheetBody(ui.draft));
+    bindShotInput();
+    hydrateMediaTiles(document.getElementById("sheetBody"));
+  }
+
+  function saveTrade() {
+    collectTradeDraft();
+    const d = ui.draft;
+    if (!d) return;
+    if (!d.accountId) { toast("Elige una cuenta."); return; }
+    if (!d.date) { toast("Indica la fecha."); return; }
+    let symbol = d.symbol === "__custom" ? (d.symbolCustom || "").trim().toUpperCase() : (d.symbol || "").trim().toUpperCase();
+    if (!symbol) { toast("Indica un símbolo."); return; }
+    let setup = d.setup === "__custom" ? (d.setupCustom || "").trim() : (d.setup || "").trim();
+    if (!setup) setup = "Sin especificar";
+    if ((state.setups || []).indexOf(setup) === -1) state.setups = (state.setups || []).concat([setup]);
+    const amount = document.getElementById("f-amount") ? Math.abs(parseAmount(document.getElementById("f-amount").value)) : Math.abs(d.pnl || 0);
+    const pnl = (d.sign === "neg" ? -1 : 1) * amount;
+    const record = {
+      id: d.id || uid(),
+      accountId: d.accountId,
+      date: d.date,
+      time: d.time || "00:00",
+      symbol: symbol,
+      side: d.side === "short" ? "short" : "long",
+      contracts: Math.max(1, parseInt(d.contracts, 10) || 1),
+      pnl: pnl,
+      setup: setup,
+      followedRules: d.followedRules !== false,
+      emotion: d.emotion || "",
+      news: !!d.news,
+      notes: d.notes || "",
+      screenshot: "",
+      media: (d.media || []).map(function (m) {
+        return { id: m.id, kind: m.kind, mime: m.mime, size: m.size, name: m.name };
+      }),
+      rating: Number(d.rating) || 0,
+      createdAt: d.createdAt || new Date().toISOString()
+    };
+    (d.removedMedia || []).forEach(function (id) {
+      mediaDelete(id).catch(function (err) { console.warn(err); });
+    });
+    ui.draftCommitted = true;
+    if (d.id) {
+      state.trades = state.trades.map((t) => t.id === d.id ? record : t);
+      toast("Trade actualizado");
+    } else {
+      state.trades = state.trades.concat([record]);
+      toast("Trade guardado");
+    }
+    closeSheet();
+    persist();
+  }
+
+  function accountSheetBody(d) {
+    const statusOpts = STATUSES.map((s) => '<option value="' + s.id + '"' + (d.status === s.id ? " selected" : "") + ">" + s.label + "</option>").join("");
+    return '<div class="group"><label class="row"><span class="row-label">Nombre</span><input id="a-name" type="text" value="' + esc(d.name || "") + '" placeholder="LucidPro 50K"></label><label class="row"><span class="row-label">Firma</span><input id="a-firm" type="text" value="' + esc(d.firm || "") + '" placeholder="Lucid Trading"></label><label class="row"><span class="row-label">Estado</span><select id="a-status">' + statusOpts + "</select></label></div>" +
+      '<div class="group"><label class="row"><span class="row-label">Tamaño</span><input id="a-size" inputmode="decimal" value="' + esc(d.size != null ? d.size : (d.startBalance || "")) + '"></label><label class="row"><span class="row-label">Balance inicial</span><input id="a-start" inputmode="decimal" value="' + esc(d.startBalance != null ? d.startBalance : "") + '"></label><label class="row"><span class="row-label">Objetivo</span><input id="a-target" inputmode="decimal" value="' + esc(d.targetBalance != null ? d.targetBalance : "") + '"></label><label class="row"><span class="row-label">MLL</span><input id="a-mll" inputmode="decimal" value="' + esc(d.mll != null ? d.mll : "") + '"></label><label class="row"><span class="row-label">Límite diario</span><input id="a-daily" inputmode="decimal" placeholder="Sin límite" value="' + esc(hasDailyLimit(d) ? d.dailyLossLimit : "") + '"></label></div>' +
+      '<p class="hint">Déjalo vacío si la cuenta no tiene límite de pérdida diario. El balance actual se calcula solo: inicial más el resultado de los trades de esta cuenta.</p>' +
+      (d.id ? '<button type="button" class="destructive" data-action="delete-account" data-id="' + esc(d.id) + '">Eliminar cuenta</button>' : "");
+  }
+
+  function openAccountSheet(id) {
+    const existing = id && accountById(id);
+    ui.draft = existing ? Object.assign({}, existing) : {
+      id: null, name: "", firm: "", size: 50000, startBalance: 50000,
+      targetBalance: "", mll: "", dailyLossLimit: null, status: "eval", excludeFromStats: false
+    };
+    openSheet("account", existing ? "Editar cuenta" : "Nueva cuenta", accountSheetBody(ui.draft));
+  }
+
+  function saveAccount() {
+    const name = (document.getElementById("a-name").value || "").trim();
+    if (!name) { toast("Ponle un nombre a la cuenta."); return; }
+    const record = {
+      id: (ui.draft && ui.draft.id) || uid(),
+      name: name,
+      firm: (document.getElementById("a-firm").value || "").trim(),
+      status: document.getElementById("a-status").value || "eval",
+      size: parseAmount(document.getElementById("a-size").value),
+      startBalance: parseAmount(document.getElementById("a-start").value),
+      targetBalance: parseAmount(document.getElementById("a-target").value),
+      mll: parseAmount(document.getElementById("a-mll").value),
+      dailyLossLimit: parseOptionalAmount(document.getElementById("a-daily").value),
+      excludeFromStats: !!(ui.draft && ui.draft.excludeFromStats)
+    };
+    if (ui.draft && ui.draft.id) {
+      state.accounts = state.accounts.map((a) => a.id === record.id ? Object.assign({}, a, record) : a);
+      toast("Cuenta actualizada");
+    } else {
+      state.accounts = state.accounts.concat([record]);
+      toast("Cuenta creada");
+    }
+    closeSheet();
+    persist();
+  }
+
+  function openRuleSheet(id) {
+    const existing = id && (state.rules || []).find((r) => r.id === id);
+    ui.draft = existing ? { id: existing.id, text: existing.text } : { id: null, text: "" };
+    const body = '<div class="group"><div class="row-note"><textarea id="r-text" placeholder="Escribe la regla\u2026" rows="4">' + esc(ui.draft.text) + "</textarea></div></div>";
+    openSheet("rule", existing ? "Editar regla" : "Nueva regla", body);
+    setTimeout(function () {
+      const el = document.getElementById("r-text");
+      if (el) el.focus();
+    }, 400);
+  }
+
+  function saveRule() {
+    const text = ((document.getElementById("r-text") && document.getElementById("r-text").value) || "").trim();
+    if (!text) { toast("Escribe la regla."); return; }
+    if (ui.draft && ui.draft.id) {
+      const rule = (state.rules || []).find((r) => r.id === ui.draft.id);
+      if (rule) rule.text = text;
+      toast("Regla actualizada");
+    } else {
+      state.rules = (state.rules || []).concat([{ id: uid(), text: text }]);
+      toast("Regla añadida");
+    }
+    closeSheet();
+    persist();
+  }
+
+  function openSettings() {
+    const body = '<p class="hint">Tus datos viven en este iPhone. Haz una copia de vez en cuando.</p><div class="group"><button type="button" class="settings-row" data-action="export-json">Exportar copia JSON</button><button type="button" class="settings-row" data-action="export-csv">Exportar trades en CSV</button><button type="button" class="settings-row" data-action="import-json">Importar JSON</button></div><p class="hint">La copia JSON incluye las fotos. Los vídeos se quedan en el iPhone y no entran en el archivo, porque pesan demasiado.</p><div class="group"><button type="button" class="settings-row danger" data-action="restore-seed">Restaurar datos de ejemplo</button><button type="button" class="settings-row danger" data-action="wipe">Borrar todo</button></div><input id="importFile" type="file" accept="application/json,.json" hidden><p class="hint">Journal · tus operaciones, en un solo sitio.</p>';
+    openSheet("settings", "Ajustes", body, { saveLabel: "Cerrar" });
+    const file = document.getElementById("importFile");
+    if (file) file.addEventListener("change", onImportFile);
+  }
+
+  function download(filename, text, mime) {
+    const blob = new Blob([text], { type: mime || "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function exportJSON() {
+    const payload = JSON.parse(JSON.stringify(state));
+    let skippedVideos = 0;
+    const trades = payload.trades || [];
+    let chain = Promise.resolve();
+    trades.forEach(function (trade) {
+      chain = chain.then(function () {
+        const kept = [];
+        const items = trade.media || [];
+        let inner = Promise.resolve();
+        items.forEach(function (m) {
+          if (m.kind === "video") { skippedVideos += 1; return; }
+          inner = inner.then(function () {
+            return mediaGet(m.id).then(function (rec) {
+              if (!rec || !rec.blob) return;
+              return blobToDataURL(rec.blob).then(function (dataURL) {
+                kept.push({ id: m.id, kind: "image", mime: m.mime, size: m.size, name: m.name, dataURL: dataURL });
+              });
+            });
+          });
+        });
+        return inner.then(function () {
+          trade.media = kept;
+          delete trade.screenshot;
+        });
+      });
+    });
+    return chain.then(function () {
+      download("journal-" + todayISO() + ".json", JSON.stringify(payload, null, 2), "application/json");
+      toast(skippedVideos ? "Copia exportada. Los vídeos no se incluyen." : "Copia exportada");
+    }).catch(function (err) {
+      console.warn(err);
+      toast("No se pudo preparar la copia.");
+    });
+  }
+
+  function csvEscape(v) {
+    const s = String(v == null ? "" : v);
+    if (/[",\n;]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function exportCSV() {
+    const header = ["fecha","hora","cuenta","simbolo","direccion","contratos","pnl","setup","reglas","emocion","noticia","ejecucion","notas"];
+    const lines = [header.join(";")];
+    sortTrades(state.trades || []).forEach((t) => {
+      const acc = accountById(t.accountId);
+      lines.push([
+        t.date, t.time, acc ? acc.name : "", t.symbol, t.side, t.contracts, t.pnl,
+        t.setup, t.followedRules === false ? "no" : "si", emotionLabel(t.emotion), t.news ? "si" : "no",
+        t.rating || "", (t.notes || "").replace(/\n/g, " ")
+      ].map(csvEscape).join(";"));
+    });
+    download("journal-trades-" + todayISO() + ".csv", lines.join("\n"), "text/csv");
+    toast("CSV exportado");
+  }
+
+  function ingestImportedMedia(data) {
+    data = data || {};
+    data.trades = data.trades || [];
+    let chain = Promise.resolve();
+    data.trades.forEach(function (trade) {
+      chain = chain.then(function () {
+        const next = [];
+        let inner = Promise.resolve();
+        const items = trade.media || [];
+        if (trade.screenshot && !items.length) {
+          items.push({ kind: "image", dataURL: trade.screenshot, name: "captura.jpg" });
+        }
+        items.forEach(function (m) {
+          inner = inner.then(function () {
+            if (m && m.dataURL) {
+              const id = m.id || uid();
+              const blob = dataURLToBlob(m.dataURL);
+              return mediaPut({
+                id: id,
+                blob: blob,
+                thumb: null,
+                kind: "image",
+                mime: blob.type || "image/jpeg",
+                size: blob.size,
+                name: m.name || "foto.jpg"
+              }).then(function () {
+                next.push({ id: id, kind: "image", mime: blob.type || "image/jpeg", size: blob.size, name: m.name || "foto.jpg" });
+              });
+            }
+            if (m && m.id && m.kind !== "video") {
+              next.push({ id: m.id, kind: m.kind || "image", mime: m.mime, size: m.size, name: m.name });
+            }
+            return null;
+          });
+        });
+        return inner.then(function () {
+          trade.media = next;
+          delete trade.screenshot;
+        });
+      });
+    });
+    return chain.then(function () { return data; });
+  }
+
+  function onImportFile(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function () {
+      try {
+        const data = JSON.parse(reader.result);
+        if (!data || !Array.isArray(data.trades) || !Array.isArray(data.accounts)) {
+          toast("El archivo no parece un journal.");
+          return;
+        }
+        confirmAction("¿Sustituir los datos actuales por este archivo?", "Esta acción reemplaza cuentas, trades y reglas. Los vídeos no viajan en el JSON.", function () {
+          mediaClear().catch(function (err) { console.warn(err); }).then(function () {
+            return ingestImportedMedia(data);
+          }).then(function (next) {
+            state = migrateState(next);
+            if (!state.setups) state.setups = ["Sin especificar"];
+            if (!state.checkins) state.checkins = {};
+            if (!state.settings) state.settings = { hideInstallTip: false };
+            closeSheet();
+            persist();
+            toast("Datos importados");
+          }).catch(function (err) {
+            console.warn(err);
+            toast("No se pudieron importar las fotos.");
+          });
+        });
+      } catch (err) {
+        toast("No se pudo leer el JSON.");
+        console.warn(err);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function confirmAction(title, text, onYes) {
+    const el = document.getElementById("confirm");
+    const back = document.getElementById("confirmBackdrop");
+    el.hidden = false;
+    back.hidden = false;
+    el.innerHTML = '<div class="confirm-card"><div class="confirm-msg"><h3>' + esc(title) + "</h3>" + (text ? "<p>" + esc(text) + "</p>" : "") + '</div><button type="button" class="danger" id="confirmYes">Eliminar</button></div><button type="button" class="confirm-cancel" id="confirmNo">Cancelar</button>';
+    requestAnimationFrame(() => {
+      back.classList.add("on");
+      el.classList.add("on");
+    });
+    const yes = document.getElementById("confirmYes");
+    const lower = title.toLowerCase();
+    if (lower.indexOf("restaurar") !== -1 || lower.indexOf("sustituir") !== -1 || lower.indexOf("borrar") !== -1) {
+      yes.textContent = "Confirmar";
+    }
+    const close = function () {
+      el.classList.remove("on");
+      back.classList.remove("on");
+      setTimeout(() => { el.hidden = true; back.hidden = true; el.innerHTML = ""; }, 360);
+    };
+    yes.onclick = function () { close(); onYes(); };
+    document.getElementById("confirmNo").onclick = close;
+    back.onclick = close;
+  }
+
+  function toast(message) {
+    const el = document.getElementById("toast");
+    el.textContent = message;
+    el.classList.add("on");
+    clearTimeout(ui.toastTimer);
+    ui.toastTimer = setTimeout(() => el.classList.remove("on"), 2200);
+  }
+
+  function promptText(message, initial) {
+    const value = window.prompt(message, initial || "");
+    return value;
+  }
+
+  function onClick(e) {
+    const target = e.target.closest("[data-action]");
+    if (!target) {
+      if (e.target.id === "backdrop") closeSheet();
+      return;
+    }
+    const action = target.dataset.action;
+    const id = target.dataset.id;
+    if (action === "noop") { e.stopPropagation(); return; }
+
+    if (action === "tab") { ui.tab = target.dataset.tab; render(); return; }
+    if (action === "new-trade") { openTradeSheet(); return; }
+    if (action === "edit-trade") { openTradeSheet(id); return; }
+    if (action === "close-sheet") { closeSheet(); return; }
+    if (action === "save-sheet") {
+      if (ui.sheet === "trade") saveTrade();
+      else if (ui.sheet === "account") saveAccount();
+      else if (ui.sheet === "rule") saveRule();
+      else closeSheet();
+      return;
+    }
+    if (action === "settings") { openSettings(); return; }
+    if (action === "hide-install") {
+      state.settings = state.settings || {};
+      state.settings.hideInstallTip = true;
+      persist();
+      return;
+    }
+    if (action === "dash-account") { ui.accountFilter = id; ui._keepScroll = true; render(); return; }
+    if (action === "month-prev") {
+      const d = ui.month || new Date();
+      ui.month = new Date(d.getFullYear(), d.getMonth() - 1, 1);
+      ui._keepScroll = true;
+      render();
+      return;
+    }
+    if (action === "month-next") {
+      const d = ui.month || new Date();
+      ui.month = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+      ui._keepScroll = true;
+      render();
+      return;
+    }
+    if (action === "filter-result") { ui.tradeResult = id; ui._keepScroll = true; render(); return; }
+    if (action === "filter-account") { ui.tradeAccount = id; ui._keepScroll = true; render(); return; }
+    if (action === "filter-setup") { ui.tradeSetup = id; ui._keepScroll = true; render(); return; }
+    if (action === "toggle-exclude") {
+      return;
+    }
+    if (action === "new-account") { openAccountSheet(); return; }
+    if (action === "edit-account") { openAccountSheet(id); return; }
+    if (action === "delete-account") {
+      confirmAction("¿Eliminar esta cuenta?", "Los trades de esta cuenta también se borrarán.", function () {
+        const gone = (state.trades || []).filter((t) => t.accountId === id);
+        collectMediaIds(gone).forEach(function (mid) { mediaDelete(mid).catch(function (err) { console.warn(err); }); });
+        state.accounts = state.accounts.filter((a) => a.id !== id);
+        state.trades = state.trades.filter((t) => t.accountId !== id);
+        closeSheet();
+        persist();
+        toast("Cuenta eliminada");
+      });
+      return;
+    }
+    if (action === "delete-trade") {
+      confirmAction("¿Eliminar este trade?", "Esta acción no se puede deshacer.", function () {
+        const trade = (state.trades || []).find((t) => t.id === id);
+        collectMediaIds(trade ? [trade] : []).forEach(function (mid) { mediaDelete(mid).catch(function (err) { console.warn(err); }); });
+        ui.draftCommitted = true;
+        state.trades = state.trades.filter((t) => t.id !== id);
+        closeSheet();
+        persist();
+        toast("Trade eliminado");
+      });
+      return;
+    }
+    if (action === "new-rule") { openRuleSheet(null); return; }
+    if (action === "edit-rule") { openRuleSheet(id); return; }
+    if (action === "delete-rule") {
+      confirmAction("¿Eliminar esta regla?", "", function () {
+        state.rules = state.rules.filter((r) => r.id !== id);
+        persist();
+      });
+      return;
+    }
+    if (action === "toggle-check") {
+      const today = todayISO();
+      state.checkins[today] = state.checkins[today] || {};
+      state.checkins[today][id] = !state.checkins[today][id];
+      ui._keepScroll = true;
+      persist();
+      return;
+    }
+    if (action === "draft-sign") { collectTradeDraft(); ui.draft.sign = id; refreshTradeSheet(); return; }
+    if (action === "draft-symbol") { collectTradeDraft(); ui.draft.symbol = id; refreshTradeSheet(); return; }
+    if (action === "draft-side") { collectTradeDraft(); ui.draft.side = id; refreshTradeSheet(); return; }
+    if (action === "draft-setup") { collectTradeDraft(); ui.draft.setup = id; refreshTradeSheet(); return; }
+    if (action === "draft-rules") { collectTradeDraft(); ui.draft.followedRules = id !== "no"; refreshTradeSheet(); return; }
+    if (action === "draft-news") { collectTradeDraft(); ui.draft.news = id === "yes"; refreshTradeSheet(); return; }
+    if (action === "draft-emotion") {
+      collectTradeDraft();
+      ui.draft.emotion = ui.draft.emotion === id ? "" : id;
+      refreshTradeSheet();
+      return;
+    }
+    if (action === "draft-rating") {
+      collectTradeDraft();
+      ui.draft.rating = Number(ui.draft.rating) === Number(id) ? 0 : Number(id);
+      refreshTradeSheet();
+      return;
+    }
+    if (action === "draft-shot") {
+      const input = document.getElementById("f-shot");
+      if (input) input.click();
+      return;
+    }
+    if (action === "remove-media") {
+      e.stopPropagation();
+      removeDraftMedia(id);
+      return;
+    }
+    if (action === "view-media") {
+      e.stopPropagation();
+      if (!(ui.draft && ui.draft.media)) {
+        const tradeBtn = target.closest(".trade");
+        /* viewer list already set if coming from draft */
+      }
+      openViewer(id);
+      return;
+    }
+    if (action === "close-viewer") { closeViewer(); return; }
+    if (action === "export-json") { exportJSON(); return; }
+    if (action === "export-csv") { exportCSV(); return; }
+    if (action === "import-json") {
+      const input = document.getElementById("importFile");
+      if (input) input.click();
+      return;
+    }
+    if (action === "restore-seed") {
+      confirmAction("¿Restaurar los datos de ejemplo?", "Se sustituyen las cuentas, trades y reglas actuales.", function () {
+        mediaClear().catch(function (err) { console.warn(err); }).then(function () {
+          state = seedState();
+          closeSheet();
+          persist();
+          toast("Datos de ejemplo restaurados");
+        });
+      });
+      return;
+    }
+    if (action === "wipe") {
+      confirmAction("¿Borrar todo el journal?", "Esta acción no se puede deshacer, salvo que tengas una copia exportada.", function () {
+        mediaClear().catch(function (err) { console.warn(err); }).then(function () {
+          state = {
+            version: DATA_VERSION,
+            accounts: [],
+            trades: [],
+            rules: DEFAULT_RULES.map((text) => ({ id: uid(), text: text })),
+            setups: ["Sin especificar"],
+            checkins: {},
+            settings: { hideInstallTip: !!(state.settings && state.settings.hideInstallTip) }
+          };
+          closeSheet();
+          persist();
+          toast("Journal vaciado");
+        });
+      });
+    }
+  }
+
+  function init() {
+    ui.month = new Date();
+    document.addEventListener("click", onClick);
+    document.getElementById("content").addEventListener("scroll", updateTopbar, { passive: true });
+    document.getElementById("content").addEventListener("change", function (e) {
+      const el = e.target;
+      if (el && el.dataset.action === "toggle-exclude") {
+        const acc = accountById(el.dataset.id);
+        if (acc) {
+          acc.excludeFromStats = !!el.checked;
+          ui._keepScroll = true;
+          persist();
+        }
+      }
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        const viewer = document.getElementById("viewer");
+        if (viewer && !viewer.hidden) { closeViewer(); return; }
+        if (!document.getElementById("confirm").hidden) return;
+        if (ui.sheet) closeSheet();
+      }
+    });
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").catch(function (err) { console.warn("SW", err); });
+    }
+
+    mediaReady().catch(function (err) { console.warn(err); }).then(function () {
+      state = loadState();
+      return migrateLegacyScreenshots(state);
+    }).then(function () {
+      saveState();
+      render();
+    }).catch(function (err) {
+      console.warn(err);
+      state = state || loadState();
+      saveState();
+      render();
+    });
+  }
+
+  init();
+})();
+
+  </script>
+</body>
+</html>
