@@ -1,5 +1,5 @@
 /* Trading Journal — service worker */
-const CACHE = "journal-v3";
+const CACHE = "journal-v4";
 const ASSETS = [
   "./",
   "./index.html",
@@ -36,6 +36,22 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+
+  const isPage = request.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith(".html");
+  if (isPage) {
+    event.respondWith(
+      fetch(request, { cache: "no-store" })
+        .then((response) => {
+          if (response && response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request).then((c) => c || caches.match("./index.html")))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(request).then((cached) => {

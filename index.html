@@ -3867,7 +3867,14 @@ kbd, .kbd {
       }
     });
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").catch(function (err) { console.warn("SW", err); });
+      navigator.serviceWorker.register("./sw.js", { updateViaCache: "none" }).then(function (reg) {
+        reg.update();
+        document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") reg.update(); });
+      }).catch(function (err) { console.warn("SW", err); });
+      var hadController = !!navigator.serviceWorker.controller, reloaded = false;
+      navigator.serviceWorker.addEventListener("controllerchange", function () {
+        if (hadController && !reloaded) { reloaded = true; location.reload(); }
+      });
     }
 
     mediaReady().catch(function (err) { console.warn(err); }).then(function () {
