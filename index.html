@@ -1294,11 +1294,36 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   height: 0.5px;
   background: var(--separator-2);
 }
-.hist-labelel {
+.hist-label {
   font-size: 12px;
   font-weight: 510;
   color: var(--secondary);
-  margin-bottom: 4px;
+  margin-top: 4px;
+}
+
+.dash-chips {
+  padding-bottom: 16px;
+}
+
+.acct-dash-body {
+  padding: 2px 16px 16px;
+}
+
+.acct-dash-body .acct-bal {
+  margin: 0 0 12px;
+}
+
+.acct-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--secondary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.2px;
 }
 .hist-val {
   font-size: 22px;
@@ -1638,6 +1663,7 @@ kbd, .kbd {
   "use strict";
 
   const STORAGE_KEY = "trading-journal-v1";
+  const UI_STORAGE_KEY = "trading-journal-ui-v1";
   const DATA_VERSION = 3;
   const OVERTRADE_N = 3;
   const MEDIA_DB_NAME = "trading-journal-media";
@@ -1831,6 +1857,39 @@ kbd, .kbd {
     const allowed = {};
     source.forEach((a) => { allowed[a.id] = true; });
     return (state.trades || []).filter((t) => allowed[t.accountId]);
+  }
+
+  function loadUiPrefs() {
+    try {
+      const raw = localStorage.getItem(UI_STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (data && typeof data.accountFilter === "string" && data.accountFilter) {
+        ui.accountFilter = data.accountFilter;
+      }
+    } catch (err) {
+      console.warn("No se pudieron leer las preferencias de la interfaz.", err);
+    }
+  }
+
+  function saveUiPrefs() {
+    try {
+      localStorage.setItem(UI_STORAGE_KEY, JSON.stringify({
+        accountFilter: ui.accountFilter || "all"
+      }));
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+  function resolveAccountFilter() {
+    const id = ui.accountFilter;
+    if (id && id !== "all" && accountById(id)) return id;
+    if (id !== "all") {
+      ui.accountFilter = "all";
+      saveUiPrefs();
+    }
+    return "all";
   }
 
   /* ---------- IndexedDB media ---------- */
@@ -2607,10 +2666,11 @@ kbd, .kbd {
     };
   }
 
-  function firstLossBanners() {
+  function firstLossBanners(accountId) {
     const today = todayISO();
     const banners = [];
     (state.accounts || []).forEach((account) => {
+      if (accountId && accountId !== "all" && account.id !== accountId) return;
       if (account.status === "breached") return;
       const metrics = accountMetrics(account);
       if (metrics.hasDailyLimit && metrics.dailyUsed >= metrics.dailyLimit) {
@@ -2856,13 +2916,27 @@ kbd, .kbd {
     return '<div class="banner tip" id="installTip"><div class="banner-body"><div class="banner-title">Añádela a tu iPhone</div><div class="banner-text">En Safari, pulsa el botón Compartir y elige <strong style="color:#fff;font-weight:590">Añadir a pantalla de inicio</strong>. Se abre como una app, también sin conexión.</div></div><button type="button" class="dismiss" data-action="hide-install" aria-label="Cerrar">Cerrar</button></div>';
   }
 
+  function accountDashCard(account, stats) {
+    const m = accountMetrics(account);
+    const days = stats.byDay ? Object.keys(stats.byDay).length : 0;
+    const progressCls = m.toMll <= 0 ? "danger" : "";
+    const pct = (m.progress * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 });
+    const ratio = fmtMoney(m.current, { sign: false }) + " / " + fmtMoney(account.targetBalance, { sign: false });
+    const remain = m.toTarget <= 0 ? "Objetivo alcanzado" : "faltan " + fmtMoney(m.toTarget, { sign: false });
+    const daily = m.hasDailyLimit
+      ? (m.dailyPnL < 0 ? fmtMoney(m.dailyRemaining, { sign: false }) + " resto" : fmtMoney(account.dailyLossLimit, { sign: false }))
+      : "Sin l\u00edmite diario";
+    return '<section class="card acct-dash"><div class="card-head"><div class="card-title">' + esc(account.name) + '</div><div class="card-meta">' + esc(account.firm || "Cuenta") + '</div></div><div class="acct-dash-body"><div class="acct-bal">' + fmtMoney(m.current, { sign: false }) + '</div><div class="progress ' + progressCls + '"><span style="width:' + (m.progress * 100).toFixed(1) + '%"></span></div><div class="acct-progress-meta"><span>' + ratio + '</span><span>' + pct + " % \u00b7 " + remain + '</span></div><div class="acct-stats"><div><div class="acct-stat-label">Colch\u00f3n hasta MLL</div><div class="acct-stat-val" style="color:' + (m.toMll <= 0 ? "var(--red)" : "inherit") + '">' + fmtMoney(m.toMll, { sign: false }) + '</div></div><div><div class="acct-stat-label">L\u00edmite diario</div><div class="acct-stat-val">' + daily + '</div></div><div><div class="acct-stat-label">D\u00edas tradeados</div><div class="acct-stat-val">' + days.toLocaleString("es-ES") + '</div></div><div><div class="acct-stat-label">Trades</div><div class="acct-stat-val">' + stats.count.toLocaleString("es-ES") + "</div></div></div></div></section>";
+  }
+
   function renderDashboard() {
-    const accountId = ui.accountFilter;
+    const accountId = resolveAccountFilter();
+    const selected = accountId !== "all" ? accountById(accountId) : null;
     const trades = includedTrades(accountId);
     const stats = computeStats(trades);
     const monthDate = ui.month || new Date();
     const tips = generateInsights(stats);
-    const banners = firstLossBanners();
+    const banners = firstLossBanners(accountId);
     const accounts = state.accounts || [];
 
     const pf = stats.profitFactor === Infinity ? "\u221e" : (stats.count && stats.grossLoss === 0 && stats.grossWin === 0 ? "\u2014" : fmtNum(stats.profitFactor, 2));
@@ -2873,8 +2947,8 @@ kbd, .kbd {
       stats.streakType === "loss" ? stats.streak + " en rojo" : stats.streak + " en tablas"
     );
 
-    const chips = '<div class="scroller"><button type="button" class="chip ' + (accountId === "all" ? "on" : "") + '" data-action="dash-account" data-id="all">Todas</button>' +
-      accounts.map((a) => '<button type="button" class="chip ' + (accountId === a.id ? "on" : "") + '" data-action="dash-account" data-id="' + esc(a.id) + '">' + esc(a.name) + (a.excludeFromStats ? " · off" : "") + "</button>").join("") + "</div>";
+    const chips = '<div class="scroller dash-chips"><button type="button" class="chip ' + (accountId === "all" ? "on" : "") + '" data-action="dash-account" data-id="all">Todas</button>' +
+      accounts.map((a) => '<button type="button" class="chip ' + (accountId === a.id ? "on" : "") + '" data-action="dash-account" data-id="' + esc(a.id) + '">' + esc(a.name) + (a.excludeFromStats ? " \u00b7 off" : "") + "</button>").join("") + "</div>";
 
     const setupEntries = Object.keys(stats.bySetup).map((label) => ({ label: label, value: stats.bySetup[label] }))
       .sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
@@ -2883,29 +2957,41 @@ kbd, .kbd {
     const bannerHTML = banners.map((b) => '<div class="banner ' + b.kind + '"><div class="banner-body"><div class="banner-title">' + esc(b.title) + '</div><div class="banner-text">' + esc(b.text) + "</div></div></div>").join("");
     const tipsHTML = tips.map((t) => '<div class="insight"><div class="insight-kicker ' + (t.tone === "good" ? "good" : t.tone === "warn" ? "warn" : "bad") + '">' + esc(t.kicker) + '</div><div class="insight-title">' + esc(t.title) + '</div><div class="insight-body">' + esc(t.body) + "</div></div>").join("");
 
-    const hist = computeHistoric(stats);
-    const histWR = hist.totalTrades ? (hist.winRate * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %" : "\u2014";
-    const histCard = '<section class="card hist-card"><div class="card-head"><div class="card-title">Histórico</div><div class="card-meta">incluye lo anterior a la app</div></div><div class="hist-grid"><div class="hist-cell"><div class="hist-val">' + histWR + '</div><div class="hist-label">Win rate histórico</div></div><div class="hist-cell"><div class="hist-val">' + hist.totalTrades.toLocaleString("es-ES") + '</div><div class="hist-label">Trades</div></div><div class="hist-cell"><div class="hist-val">' + hist.totalDays.toLocaleString("es-ES") + '</div><div class="hist-label">Días tradeados</div></div><div class="hist-cell"><div class="hist-val">' + esc(hist.timeLabel) + '</div><div class="hist-label">Tiempo tradeando</div></div></div><button type="button" class="link-row" data-action="tab" data-tab="analista">Ver el análisis completo</button></section>';
+    let contextCard;
+    if (selected) {
+      contextCard = accountDashCard(selected, stats);
+    } else {
+      const hist = computeHistoric(stats);
+      const histWR = hist.totalTrades ? (hist.winRate * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %" : "\u2014";
+      contextCard = '<section class="card hist-card"><div class="card-head"><div class="card-title">Hist\u00f3rico</div><div class="card-meta">incluye lo anterior a la app</div></div><div class="hist-grid"><div class="hist-cell"><div class="hist-val">' + histWR + '</div><div class="hist-label">Win rate hist\u00f3rico</div></div><div class="hist-cell"><div class="hist-val">' + hist.totalTrades.toLocaleString("es-ES") + '</div><div class="hist-label">Trades</div></div><div class="hist-cell"><div class="hist-val">' + hist.totalDays.toLocaleString("es-ES") + '</div><div class="hist-label">D\u00edas tradeados</div></div><div class="hist-cell"><div class="hist-val">' + esc(hist.timeLabel) + '</div><div class="hist-label">Tiempo tradeando</div></div></div><button type="button" class="link-row" data-action="tab" data-tab="analista">Ver el an\u00e1lisis completo</button></section>';
+    }
 
-    return '<div class="page"><h1 class="large-title">Resumen</h1><div class="hero"><div class="hero-pnl ' + clsPnL(stats.net) + '">' + fmtMoney(stats.net) + '</div><div class="hero-sub">' + stats.count + (stats.count === 1 ? " operación" : " operaciones") + " · " + (wr === "\u2014" ? "sin win rate aún" : wr + " aciertos") + "</div></div>" +
-      histCard + installTip() + bannerHTML + chips +
-      '<div class="section-label">En la app</div>' +
+    const heroBits = [];
+    if (selected) heroBits.push(selected.name);
+    heroBits.push(stats.count + (stats.count === 1 ? " operaci\u00f3n" : " operaciones"));
+    heroBits.push(wr === "\u2014" ? "sin win rate a\u00fan" : wr + " aciertos");
+    const sectionLabel = selected ? selected.name : "En la app";
+
+    return '<div class="page"><h1 class="large-title">Resumen</h1>' + chips +
+      '<div class="hero"><div class="hero-pnl ' + clsPnL(stats.net) + '">' + fmtMoney(stats.net) + '</div><div class="hero-sub">' + heroBits.join(" \u00b7 ") + "</div></div>" +
+      contextCard + installTip() + bannerHTML +
+      '<div class="section-label">' + esc(sectionLabel) + "</div>" +
       '<div class="metrics">' +
         metricCell("Aciertos", wr) +
         metricCell("Profit factor", pf) +
         metricCell("Expectativa", fmtMoney(stats.expectancy), clsPnL(stats.expectancy) + (Math.abs(stats.expectancy) >= 1000 ? " sm" : "")) +
         metricCell("Operaciones", String(stats.count)) +
         metricCell("Ganancia media", stats.wins.length ? fmtMoney(stats.avgWin) : "\u2014", stats.wins.length ? "up sm" : "sm") +
-        metricCell("Pérdida media", stats.losses.length ? fmtMoney(stats.avgLoss) : "\u2014", stats.losses.length ? "down sm" : "sm") +
+        metricCell("P\u00e9rdida media", stats.losses.length ? fmtMoney(stats.avgLoss) : "\u2014", stats.losses.length ? "down sm" : "sm") +
         metricCell("Ratio G/P", ratio) +
         metricCell("Racha actual", streakText, (stats.streakType === "win" ? "up sm" : stats.streakType === "loss" ? "down sm" : "sm")) +
         metricCell("Mejor trade", stats.best ? fmtMoney(stats.best.pnl) : "\u2014", stats.best ? "up sm" : "sm") +
         metricCell("Peor trade", stats.worst ? fmtMoney(stats.worst.pnl) : "\u2014", stats.worst ? "down sm" : "sm") +
       '</div><section class="card"><div class="card-head"><div class="card-title">Curva de equidad</div><div class="card-meta">Acumulado</div></div>' + equitySVG(trades) +
       '</section><section class="card"><div class="card-pad"><div class="card-title" style="margin-bottom:8px">Calendario</div>' + calendarHTML(stats.byDay, monthDate) +
-      '</div></section><section class="card"><div class="card-head"><div class="card-title">Cómo mejorar</div></div><div class="card-pad" style="padding-top:0">' + tipsHTML +
-      '</div></section><section class="card"><div class="card-head"><div class="card-title">Por setup</div></div><div class="card-pad" style="padding-top:0">' + barList(setupEntries, "Todavía no hay setups registrados.") +
-      '</div></section><section class="card"><div class="card-head"><div class="card-title">Por día de la semana</div></div><div class="card-pad" style="padding-top:0">' + barList(weekdayEntries, "Aún no hay suficientes sesiones.") +
+      '</div></section><section class="card"><div class="card-head"><div class="card-title">C\u00f3mo mejorar</div></div><div class="card-pad" style="padding-top:0">' + tipsHTML +
+      '</div></section><section class="card"><div class="card-head"><div class="card-title">Por setup</div></div><div class="card-pad" style="padding-top:0">' + barList(setupEntries, "Todav\u00eda no hay setups registrados.") +
+      '</div></section><section class="card"><div class="card-head"><div class="card-title">Por d\u00eda de la semana</div></div><div class="card-pad" style="padding-top:0">' + barList(weekdayEntries, "A\u00fan no hay suficientes sesiones.") +
       '</div></section><section class="card"><div class="card-head"><div class="card-title">Cumplimiento de reglas</div></div><div class="card-pad" style="padding-top:4px"><div class="split"><div class="split-col"><div class="split-label">Con reglas</div><div class="split-val ' + clsPnL(stats.followedPnL) + '">' + fmtMoney(stats.followedPnL) + '</div><div class="split-meta">' + stats.followedN + " trade" + (stats.followedN === 1 ? "" : "s") + '</div></div><div class="split-col"><div class="split-label">Sin reglas</div><div class="split-val ' + clsPnL(stats.brokenPnL) + '">' + fmtMoney(stats.brokenPnL) + '</div><div class="split-meta">' + stats.brokenN + " trade" + (stats.brokenN === 1 ? "" : "s") + "</div></div></div></div></section></div>";
   }
 
@@ -3702,7 +3788,7 @@ kbd, .kbd {
       persist();
       return;
     }
-    if (action === "dash-account") { ui.accountFilter = id; ui._keepScroll = true; render(); return; }
+    if (action === "dash-account") { ui.accountFilter = id || "all"; saveUiPrefs(); ui._keepScroll = true; render(); return; }
     if (action === "month-prev") {
       const d = ui.month || new Date();
       ui.month = new Date(d.getFullYear(), d.getMonth() - 1, 1);
@@ -3731,6 +3817,10 @@ kbd, .kbd {
         collectMediaIds(gone).forEach(function (mid) { mediaDelete(mid).catch(function (err) { console.warn(err); }); });
         state.accounts = state.accounts.filter((a) => a.id !== id);
         state.trades = state.trades.filter((t) => t.accountId !== id);
+        if (ui.accountFilter === id) {
+          ui.accountFilter = "all";
+          saveUiPrefs();
+        }
         closeSheet();
         persist();
         toast("Cuenta eliminada");
@@ -3879,6 +3969,8 @@ kbd, .kbd {
 
     mediaReady().catch(function (err) { console.warn(err); }).then(function () {
       state = loadState();
+      loadUiPrefs();
+      resolveAccountFilter();
       return migrateLegacyScreenshots(state);
     }).then(function () {
       saveState();
@@ -3886,6 +3978,8 @@ kbd, .kbd {
     }).catch(function (err) {
       console.warn(err);
       state = state || loadState();
+      loadUiPrefs();
+      resolveAccountFilter();
       saveState();
       render();
     });
