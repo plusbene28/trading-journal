@@ -2010,6 +2010,137 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
 .cal-day.today .cal-num { background: var(--label); color: var(--bg); }
 
 .inv-month .day-title { text-transform: none; }
+
+/* —— Privacy mode + collapsible cards —— */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.icon-btn.is-on {
+  background: var(--fill-2);
+  color: var(--secondary);
+}
+.money {
+  display: inline-block;
+  position: relative;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+  vertical-align: baseline;
+}
+.money-mask {
+  display: none;
+  color: var(--secondary);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+.money-dots { letter-spacing: 0.16em; }
+.cal-pnl .money-mask,
+.cal-pnl .money-dots { letter-spacing: 0.04em; }
+#app.hide-amounts .money-val { display: none; }
+#app.hide-amounts .money-mask { display: inline; color: var(--secondary) !important; }
+#app.hide-amounts .money,
+#app.hide-amounts .hero-pnl,
+#app.hide-amounts .hero-sub .up,
+#app.hide-amounts .hero-sub .down,
+#app.hide-amounts .trade-pnl,
+#app.hide-amounts .day-total,
+#app.hide-amounts .metric-value.up,
+#app.hide-amounts .metric-value.down,
+#app.hide-amounts .cal-pnl,
+#app.hide-amounts .cal-legend .up,
+#app.hide-amounts .cal-legend .down,
+#app.hide-amounts .bar-val,
+#app.hide-amounts .split-val,
+#app.hide-amounts .pattern-cost,
+#app.hide-amounts .pattern-if span,
+#app.hide-amounts .acct-bal,
+#app.hide-amounts .acct-stat-val,
+#app.hide-amounts .inv-row-amt,
+#app.hide-amounts .inv-entry-sub,
+#app.hide-amounts .hist-val.up,
+#app.hide-amounts .hist-val.down {
+  color: var(--secondary) !important;
+}
+#app.hide-amounts .money {
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+#app.privacy-anim .money,
+#app.privacy-anim .hero-pnl,
+#app.privacy-anim .cal-pnl,
+#app.privacy-anim .acct-bal,
+#app.privacy-anim .metric-value {
+  animation: privacyPulse .34s var(--ease);
+}
+@keyframes privacyPulse {
+  0% { transform: scale(1); filter: blur(0); }
+  35% { transform: scale(0.97); filter: blur(7px); }
+  100% { transform: scale(1); filter: blur(0); }
+}
+
+.card-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 16px 16px 8px;
+  text-align: left;
+  background: transparent;
+  cursor: pointer;
+}
+.card.is-collapsed .card-toggle { padding-bottom: 16px; }
+.card-toggle .card-title { flex: 1; min-width: 0; text-align: left; }
+.card-head-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.card-chev {
+  width: 18px;
+  height: 18px;
+  color: var(--tertiary);
+  display: grid;
+  place-items: center;
+  transition: transform .28s var(--ease);
+  flex-shrink: 0;
+}
+.card-chev svg { width: 16px; height: 16px; }
+.card.is-collapsed .card-chev { transform: rotate(-90deg); }
+.card-body {
+  overflow: hidden;
+  transition: height .32s var(--ease), opacity .24s var(--ease);
+}
+.card.is-collapsed .card-body {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.s-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  min-height: 56px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.s-toggle .s-copy { flex: 1; min-width: 0; padding-right: 8px; }
+
+.metrics-card .metrics {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
 </style>
 </head>
 <body>
@@ -2020,12 +2151,20 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
           <div class="brand-mark"><img src="icon-180.png" alt=""></div>
           <div class="brand-title" id="compactTitle">Journal</div>
         </div>
-        <button type="button" class="icon-btn" data-action="settings" aria-label="Ajustes">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
+        <div class="topbar-actions">
+          <button type="button" class="icon-btn" data-action="toggle-privacy" id="privacyBtn" aria-label="Ocultar importes" aria-pressed="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+          <button type="button" class="icon-btn" data-action="settings" aria-label="Ajustes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0 1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -2100,7 +2239,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
   const STORAGE_KEY = "trading-journal-v1";
   const UI_STORAGE_KEY = "trading-journal-ui-v1";
   const DATA_VERSION = 4;
-  const APP_VERSION = "1.7";
+  const APP_VERSION = "1.8";
   const OVERTRADE_N = 3;
   const MEDIA_DB_NAME = "trading-journal-media";
   const MEDIA_STORE = "files";
@@ -2152,7 +2291,10 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     chart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="M8 15l3.5-4 3 2.5L19 8"/></svg>',
     spark: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.6 5.2L19 10l-5.4 1.8L12 17l-1.6-5.2L5 10l5.4-1.8L12 3z"/></svg>',
     wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16.5" cy="14.5" r="1"/></svg>',
-    list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7h11M9 12h11M9 17h11"/><path d="M5 7h.01M5 12h.01M5 17h.01"/></svg>'
+    list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7h11M9 12h11M9 17h11"/><path d="M5 7h.01M5 12h.01M5 17h.01"/></svg>',
+    eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 1 0 2.8 2.8"/><path d="M9.9 5.15A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17.3 17.3 0 0 1-3.15 3.85"/><path d="M6.1 6.1C3.85 7.7 2 12 2 12s3.5 7 10 7a9.9 9.9 0 0 0 4.35-1.05"/><path d="M14.12 9.12A3 3 0 0 0 9.88 13.9"/></svg>',
+    chevD: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
   };
 
   let state = null;
@@ -2166,7 +2308,9 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     month: null,
     draft: null,
     sheet: null,
-    toastTimer: null
+    toastTimer: null,
+    hideAmounts: false,
+    collapsedCards: {}
   };
 
   function uid() {
@@ -2215,7 +2359,9 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     return sign + groupInt(parts[0]) + "," + parts[1];
   }
 
-  function fmtMoney(n, opts) {
+  const MONEY_MASK = "••••\u00a0$";
+
+  function formatMoneyPlain(n, opts) {
     opts = opts || {};
     const sign = opts.sign !== false;
     const abs = !!opts.abs;
@@ -2223,11 +2369,26 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     const value = abs ? Math.abs(num) : num;
     const formatted = formatNumber(value, Number.isInteger(Math.abs(value)) ? 0 : 2).replace(/^\u2212/, "");
     const suffix = "\u00a0$";
-    const body = (value < 0 ? "\u2212" : "") + formatted + suffix;
-    if (!sign) return body;
+    if (!sign) return (value < 0 ? "\u2212" : "") + formatted + suffix;
     if (value > 0) return "+" + formatted + suffix;
     if (value < 0) return "\u2212" + formatted + suffix;
     return "0" + suffix;
+  }
+
+  function moneyHTML(text, compact) {
+    const mask = compact ? "••••" : '<span class="money-dots">••••</span>\u00a0$';
+    return '<span class="money"><span class="money-val">' + esc(text) + '</span><span class="money-mask" aria-hidden="true">' + mask + "</span></span>";
+  }
+
+  function fmtMoney(n, opts) {
+    opts = opts || {};
+    const formatted = formatMoneyPlain(n, opts);
+    if (opts.plain) return ui.hideAmounts ? MONEY_MASK : formatted;
+    return moneyHTML(formatted);
+  }
+
+  function fmtMoneyPlain(n, opts) {
+    return fmtMoney(n, Object.assign({}, opts || {}, { plain: true }));
   }
 
   function fmtNum(n, digits) {
@@ -2266,12 +2427,15 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
   function compactPnL(n) {
     const v = Math.abs(n);
     const sign = n > 0 ? "+" : n < 0 ? "\u2212" : "";
+    let out;
     if (v >= 1000) {
       const k = v / 1000;
       const digits = k >= 10 ? 0 : 1;
-      return sign + k.toFixed(digits).replace(".", ",") + "k";
+      out = sign + k.toFixed(digits).replace(".", ",") + "k";
+    } else {
+      out = sign + String(Math.round(v));
     }
-    return sign + String(Math.round(v));
+    return moneyHTML(out, true);
   }
 
   function emotionLabel(id) {
@@ -2321,6 +2485,10 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       if (data && typeof data.accountFilter === "string" && data.accountFilter) {
         ui.accountFilter = data.accountFilter;
       }
+      ui.hideAmounts = !!(data && data.hideAmounts);
+      if (data && data.collapsedCards && typeof data.collapsedCards === "object" && !Array.isArray(data.collapsedCards)) {
+        ui.collapsedCards = data.collapsedCards;
+      }
     } catch (err) {
       console.warn("No se pudieron leer las preferencias de la interfaz.", err);
     }
@@ -2329,10 +2497,101 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
   function saveUiPrefs() {
     try {
       localStorage.setItem(UI_STORAGE_KEY, JSON.stringify({
-        accountFilter: ui.accountFilter || "all"
+        accountFilter: ui.accountFilter || "all",
+        hideAmounts: !!ui.hideAmounts,
+        collapsedCards: ui.collapsedCards || {}
       }));
     } catch (err) {
       console.warn(err);
+    }
+  }
+
+  function applyPrivacyMode(opts) {
+    opts = opts || {};
+    const app = document.getElementById("app");
+    app.classList.toggle("hide-amounts", !!ui.hideAmounts);
+    const btn = document.getElementById("privacyBtn");
+    if (btn) {
+      btn.setAttribute("aria-pressed", ui.hideAmounts ? "true" : "false");
+      btn.setAttribute("aria-label", ui.hideAmounts ? "Mostrar importes" : "Ocultar importes");
+      btn.classList.toggle("is-on", !!ui.hideAmounts);
+      btn.innerHTML = ui.hideAmounts ? ICO.eyeOff : ICO.eye;
+    }
+    const box = document.getElementById("privacySwitch");
+    if (box) box.checked = !!ui.hideAmounts;
+    if (opts.animate) {
+      app.classList.remove("privacy-anim");
+      void app.offsetWidth;
+      app.classList.add("privacy-anim");
+      clearTimeout(ui.privacyAnimTimer);
+      ui.privacyAnimTimer = setTimeout(function () { app.classList.remove("privacy-anim"); }, 360);
+      if (navigator.vibrate) navigator.vibrate(10);
+    }
+  }
+
+  function setHideAmounts(on, opts) {
+    opts = opts || {};
+    ui.hideAmounts = !!on;
+    saveUiPrefs();
+    applyPrivacyMode({ animate: opts.animate !== false });
+    ui._keepScroll = true;
+    render();
+  }
+
+  function isCardCollapsed(id) {
+    return !!(ui.collapsedCards && ui.collapsedCards[id]);
+  }
+
+  function cardShell(id, title, meta, body, extraClass) {
+    const collapsed = isCardCollapsed(id);
+    return '<section class="card is-collapsible' + (collapsed ? " is-collapsed" : "") + (extraClass ? " " + extraClass : "") + '" data-card="' + esc(id) + '">' +
+      '<button type="button" class="card-toggle" data-action="toggle-card" data-card="' + esc(id) + '" aria-expanded="' + (collapsed ? "false" : "true") + '">' +
+        '<div class="card-title">' + title + "</div>" +
+        '<span class="card-head-right">' + (meta ? '<span class="card-meta">' + meta + "</span>" : "") +
+        '<span class="card-chev" aria-hidden="true">' + ICO.chevD + "</span></span>" +
+      "</button>" +
+      '<div class="card-body">' + body + "</div></section>";
+  }
+
+  function syncCollapsedCards() {
+    document.querySelectorAll(".card.is-collapsible").forEach(function (card) {
+      const body = card.querySelector(":scope > .card-body");
+      if (!body) return;
+      if (card.classList.contains("is-collapsed")) body.style.height = "0px";
+      else body.style.height = "";
+    });
+  }
+
+  function toggleCard(id) {
+    if (!id) return;
+    const card = document.querySelector('section.card[data-card="' + id + '"]');
+    if (!card) return;
+    const body = card.querySelector(":scope > .card-body");
+    if (!body) return;
+    ui.collapsedCards = ui.collapsedCards || {};
+    const willCollapse = !card.classList.contains("is-collapsed");
+    ui.collapsedCards[id] = willCollapse;
+    saveUiPrefs();
+    const toggle = card.querySelector(".card-toggle");
+    if (toggle) toggle.setAttribute("aria-expanded", willCollapse ? "false" : "true");
+    if (willCollapse) {
+      body.style.height = body.scrollHeight + "px";
+      body.style.opacity = "1";
+      void body.offsetHeight;
+      card.classList.add("is-collapsed");
+      body.style.height = "0px";
+    } else {
+      card.classList.remove("is-collapsed");
+      const target = body.scrollHeight;
+      body.style.height = "0px";
+      void body.offsetHeight;
+      body.style.height = target + "px";
+      const done = function (e) {
+        if (e && e.propertyName && e.propertyName !== "height") return;
+        if (!card.classList.contains("is-collapsed")) body.style.height = "";
+        body.removeEventListener("transitionend", done);
+      };
+      body.addEventListener("transitionend", done);
     }
   }
 
@@ -2855,7 +3114,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       "revenge",
       "Trades después de la primera pérdida",
       revenge,
-      "Tras el primer rojo del día, volviste a entrar " + revenge.length + (revenge.length === 1 ? " vez" : " veces") + ". Esa racha de revancha suma " + fmtMoney(revenge.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". El primer stop ya te decía que el día no era tuyo.",
+      "Tras el primer rojo del día, volviste a entrar " + revenge.length + (revenge.length === 1 ? " vez" : " veces") + ". Esa racha de revancha suma " + fmtMoneyPlain(revenge.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". El primer stop ya te decía que el día no era tuyo.",
       "Cuando salte el primer stop, cierra la plataforma. Una pérdida y fuera, sin excepciones."
     ));
 
@@ -2864,7 +3123,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       "rules",
       "Operar sin respetar las reglas",
       broken,
-      broken.length + (broken.length === 1 ? " trade marcado sin reglas suma " : " trades marcados sin reglas suman ") + fmtMoney(broken.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". Saltarte el plan convierte un sistema válido en ruleta.",
+      broken.length + (broken.length === 1 ? " trade marcado sin reglas suma " : " trades marcados sin reglas suman ") + fmtMoneyPlain(broken.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". Saltarte el plan convierte un sistema válido en ruleta.",
       "Si una entrada no cumple todas las reglas, no la tomes. Anota la tentación, no el trade."
     ));
 
@@ -2873,9 +3132,9 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       const labels = { fomo: "FOMO", venganza: "venganza", ansioso: "ansiedad" };
       const titles = { fomo: "Entradas por FOMO", venganza: "Trades de venganza", ansioso: "Operar con ansiedad" };
       const whys = {
-        fomo: "Entraste por miedo a quedarte fuera. El FOMO te ha costado " + fmtMoney(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + " en " + subset.length + (subset.length === 1 ? " trade" : " trades") + ", porque compras un movimiento ya hecho.",
-        venganza: "Operar con rabia para recuperar lo perdido te ha costado " + fmtMoney(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + " en " + subset.length + (subset.length === 1 ? " trade" : " trades") + ". El tamaño y el criterio se van juntos.",
-        ansioso: "Con ansiedad el gatillo se adelanta. " + subset.length + (subset.length === 1 ? " trade ansioso suma " : " trades ansiosos suman ") + fmtMoney(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + "."
+        fomo: "Entraste por miedo a quedarte fuera. El FOMO te ha costado " + fmtMoneyPlain(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + " en " + subset.length + (subset.length === 1 ? " trade" : " trades") + ", porque compras un movimiento ya hecho.",
+        venganza: "Operar con rabia para recuperar lo perdido te ha costado " + fmtMoneyPlain(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + " en " + subset.length + (subset.length === 1 ? " trade" : " trades") + ". El tamaño y el criterio se van juntos.",
+        ansioso: "Con ansiedad el gatillo se adelanta. " + subset.length + (subset.length === 1 ? " trade ansioso suma " : " trades ansiosos suman ") + fmtMoneyPlain(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + "."
       };
       const fixes = {
         fomo: "Si sientes FOMO, espera el próximo setup limpio. El mercado no se acaba esta mañana.",
@@ -2899,7 +3158,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         "setup-" + slug,
         "Setup «" + name + "» con expectativa negativa",
         subset,
-        "Este setup ha perdido " + fmtMoney(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + " en " + subset.length + " trades (aciertos " + (subset.filter(function (t) { return t.pnl > 0; }).length / subset.length * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %). Seguir tomándolo es pagar por un patrón que no te da ventaja.",
+        "Este setup ha perdido " + fmtMoneyPlain(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + " en " + subset.length + " trades (aciertos " + (subset.filter(function (t) { return t.pnl > 0; }).length / subset.length * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %). Seguir tomándolo es pagar por un patrón que no te da ventaja.",
         "Pausa este setup hasta revisar 20 ejemplos. Si no encuentras un filtro claro, elimínalo del plan."
       ));
     });
@@ -2922,7 +3181,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         "weekday-" + worstWd,
         "Operar en " + name,
         subset,
-        "En " + name + " tus " + subset.length + " trades suman " + fmtMoney(worstWdPnL) + ". Ese día de la semana te está restando.",
+        "En " + name + " tus " + subset.length + " trades suman " + fmtMoneyPlain(worstWdPnL) + ". Ese día de la semana te está restando.",
         "Reduce el tamaño a la mitad en " + name + " o pasa esa sesión a solo observación."
       ));
     }
@@ -2951,7 +3210,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         "hour-" + worstHour,
         "Operar a las " + labelHour,
         subset,
-        "En esa franja has perdido " + fmtMoney(worstHourPnL) + " con " + subset.length + " trades. Puede coincidir con noticias o con un horario en el que no estás fino.",
+        "En esa franja has perdido " + fmtMoneyPlain(worstHourPnL) + " con " + subset.length + " trades. Puede coincidir con noticias o con un horario en el que no estás fino.",
         "Evita abrir operaciones entre las " + labelHour + " y las " + labelNext + " hasta que el sample sea claramente positivo."
       ));
     }
@@ -2964,7 +3223,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       "oversize",
       "Contratos por encima de tu mediana",
       oversized,
-      "Tu mediana es " + medLabel + (med === 1 ? " contrato" : " contratos") + ", pero en " + oversized.length + (oversized.length === 1 ? " trade fuiste más grande y eso suma " : " trades fuiste más grande y eso suma ") + fmtMoney(oversized.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". El oversize convierte una pérdida normal en un golpe.",
+      "Tu mediana es " + medLabel + (med === 1 ? " contrato" : " contratos") + ", pero en " + oversized.length + (oversized.length === 1 ? " trade fuiste más grande y eso suma " : " trades fuiste más grande y eso suma ") + fmtMoneyPlain(oversized.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". El oversize convierte una pérdida normal en un golpe.",
       "Fija un tamaño máximo igual a tu mediana (" + medLabel + ") y no lo subas para recuperar."
     ));
 
@@ -2973,7 +3232,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       "news",
       "Trades en noticia",
       newsTrades,
-      newsTrades.length + (newsTrades.length === 1 ? " operación en noticia suma " : " operaciones en noticia suman ") + fmtMoney(newsTrades.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". El spread y los spikes no perdonan un método pensado para otra volatilidad.",
+      newsTrades.length + (newsTrades.length === 1 ? " operación en noticia suma " : " operaciones en noticia suman ") + fmtMoneyPlain(newsTrades.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". El spread y los spikes no perdonan un método pensado para otra volatilidad.",
       "Calendario a la vista: si hay high impact en los próximos 30 minutos, no operes."
     ));
 
@@ -2983,7 +3242,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         "holders",
         "Dejar correr las pérdidas",
         holders,
-        holders.length + (holders.length === 1 ? " trade perdió " : " trades perdieron ") + "más del doble de tu ganancia media (" + fmtMoney(avgWin, { sign: false }) + "). Aguantar el rojo te ha costado " + fmtMoney(holders.reduce(function (s, t) { return s + t.pnl; }, 0)) + ".",
+        holders.length + (holders.length === 1 ? " trade perdió " : " trades perdieron ") + "más del doble de tu ganancia media (" + fmtMoneyPlain(avgWin, { sign: false }) + "). Aguantar el rojo te ha costado " + fmtMoneyPlain(holders.reduce(function (s, t) { return s + t.pnl; }, 0)) + ".",
         "Coloca el stop al entrar y no lo alejes. Si el trade vale ya 2 veces tu ganancia media en contra, sal."
       ));
     }
@@ -3001,7 +3260,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       "overtrade",
       "Días con más de " + overN + " trades",
       overTrades,
-      overDays.length + (overDays.length === 1 ? " día con sobrecarga (" : " días con sobrecarga (") + overTrades.length + " operaciones) suman " + fmtMoney(overTrades.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". Cuando el recuento sube, suele bajar la calidad.",
+      overDays.length + (overDays.length === 1 ? " día con sobrecarga (" : " días con sobrecarga (") + overTrades.length + " operaciones) suman " + fmtMoneyPlain(overTrades.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". Cuando el recuento sube, suele bajar la calidad.",
       "Tope de " + overN + " trades al día. Al llegar, cierra la plataforma aunque queden ganas."
     ));
 
@@ -3263,7 +3522,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         banners.push({
           kind: "stop",
           title: "Límite diario alcanzado",
-          text: account.name + ": has llegado a " + fmtMoney(-metrics.dailyUsed, { sign: false }) + ". Cierra la plataforma."
+          text: account.name + ": has llegado a " + fmtMoneyPlain(-metrics.dailyUsed, { sign: false }) + ". Cierra la plataforma."
         });
         return;
       }
@@ -3272,7 +3531,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         banners.push({
           kind: "stop",
           title: "Una pérdida y fuera: cierra la plataforma",
-          text: "El primer trade de hoy en " + account.name + " cerró en " + fmtMoney(todays[0].pnl) + ". Mañana hay otra sesión; la cuenta sigue viva."
+          text: "El primer trade de hoy en " + account.name + " cerró en " + fmtMoneyPlain(todays[0].pnl) + ". Mañana hay otra sesión; la cuenta sigue viva."
         });
       }
     });
@@ -3291,7 +3550,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         tone: "bad",
         kicker: "Ratio",
         title: "Recorta las pérdidas",
-        body: "Tu pérdida media (" + fmtMoney(stats.avgLossAbs, { sign: false, abs: true }) + ") es mayor que tu ganancia media (" + fmtMoney(stats.avgWin) + "). Con este ratio necesitarías acertar más del " + (need * 100).toLocaleString("es-ES", { maximumFractionDigits: 0 }) + " % solo para quedar en cero. El stop no se mueve."
+        body: "Tu pérdida media (" + fmtMoneyPlain(stats.avgLossAbs, { sign: false, abs: true }) + ") es mayor que tu ganancia media (" + fmtMoneyPlain(stats.avgWin) + "). Con este ratio necesitarías acertar más del " + (need * 100).toLocaleString("es-ES", { maximumFractionDigits: 0 }) + " % solo para quedar en cero. El stop no se mueve."
       });
     } else if (stats.ratio >= 1.2 && stats.wins.length && stats.losses.length) {
       tips.push({
@@ -3323,7 +3582,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         tone: "bad",
         kicker: "Venganza",
         title: "El segundo trade te está costando caro",
-        body: "En " + afterFirstLoss.days + (afterFirstLoss.days === 1 ? " día" : " días") + " seguiste operando después de la primera pérdida. Esos trades extra suman " + fmtMoney(afterFirstLoss.pnl) + ". Una pérdida y fuera: mañana hay otra sesión."
+        body: "En " + afterFirstLoss.days + (afterFirstLoss.days === 1 ? " día" : " días") + " seguiste operando después de la primera pérdida. Esos trades extra suman " + fmtMoneyPlain(afterFirstLoss.pnl) + ". Una pérdida y fuera: mañana hay otra sesión."
       });
     } else if (afterFirstLoss.days === 0 && stats.losses.length) {
       tips.push({
@@ -3339,7 +3598,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         tone: "bad",
         kicker: "Reglas",
         title: "Saltar las reglas te cuesta dinero",
-        body: stats.brokenN + (stats.brokenN === 1 ? " trade fuera de reglas suma " : " trades fuera de reglas suman ") + fmtMoney(stats.brokenPnL) + ". Los que sí las cumpliste: " + fmtMoney(stats.followedPnL) + " (" + stats.followedN + "). La diferencia no es técnica, es disciplina."
+        body: stats.brokenN + (stats.brokenN === 1 ? " trade fuera de reglas suma " : " trades fuera de reglas suman ") + fmtMoneyPlain(stats.brokenPnL) + ". Los que sí las cumpliste: " + fmtMoneyPlain(stats.followedPnL) + " (" + stats.followedN + "). La diferencia no es técnica, es disciplina."
       });
     }
 
@@ -3348,7 +3607,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         tone: stats.newsPnL < 0 ? "bad" : "warn",
         kicker: "Noticias",
         title: stats.newsPnL < 0 ? "Las noticias te están haciendo daño" : "Cuidado con operar noticias",
-        body: stats.newsN + (stats.newsN === 1 ? " trade en noticia suma " : " trades en noticia suman ") + fmtMoney(stats.newsPnL) + ". CPI, FOMC y NFP se quedan fuera: no es un método, es cara o cruz."
+        body: stats.newsN + (stats.newsN === 1 ? " trade en noticia suma " : " trades en noticia suman ") + fmtMoneyPlain(stats.newsPnL) + ". CPI, FOMC y NFP se quedan fuera: no es un método, es cara o cruz."
       });
     }
 
@@ -3362,7 +3621,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         tone: "warn",
         kicker: "Emoción",
         title: "Cuando operas " + emotionLabel(worstEmotion.id).toLowerCase() + ", pierdes",
-        body: worstEmotion.n + (worstEmotion.n === 1 ? " trade con esa emoción suma " : " trades con esa emoción suman ") + fmtMoney(worstEmotion.pnl) + ". Si aparece, espera diez minutos fuera de la pantalla antes de volver a entrar."
+        body: worstEmotion.n + (worstEmotion.n === 1 ? " trade con esa emoción suma " : " trades con esa emoción suman ") + fmtMoneyPlain(worstEmotion.pnl) + ". Si aparece, espera diez minutos fuera de la pantalla antes de volver a entrar."
       });
     }
 
@@ -3380,7 +3639,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         tone: overPnL < 0 ? "bad" : "warn",
         kicker: "Overtrading",
         title: "Hay días con demasiados trades",
-        body: overDays + (overDays === 1 ? " día" : " días") + " con más de " + OVER + " operaciones suman " + fmtMoney(overPnL) + ". Menos entradas, mismas reglas, mejor espera."
+        body: overDays + (overDays === 1 ? " día" : " días") + " con más de " + OVER + " operaciones suman " + fmtMoneyPlain(overPnL) + ". Menos entradas, mismas reglas, mejor espera."
       });
     }
 
@@ -3448,7 +3707,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       zero = '<line x1="' + padL + '" y1="' + zy.toFixed(1) + '" x2="' + (w - padR) + '" y2="' + zy.toFixed(1) + '" stroke="rgba(142,142,147,0.45)" stroke-width="0.8" stroke-dasharray="3 3"/>';
     }
     const labelY = Math.max(12, Math.min(h - 8, lastPt[1] + 4));
-    return '<div class="equity-wrap"><svg viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none" aria-label="Curva de equidad"><defs><linearGradient id="eqFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + soft + '"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></linearGradient></defs>' + zero + '<path d="' + area + '" fill="url(#eqFill)"/><path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/><circle cx="' + lastPt[0].toFixed(1) + '" cy="' + lastPt[1].toFixed(1) + '" r="3.2" fill="' + color + '"/><text x="' + Math.min(w - 4, lastPt[0] + 6).toFixed(1) + '" y="' + labelY.toFixed(1) + '" fill="' + color + '" font-size="10" font-weight="600" font-family="-apple-system, system-ui, sans-serif">' + esc(fmtMoney(last)) + "</text></svg></div>";
+    return '<div class="equity-wrap"><svg viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none" aria-label="Curva de equidad"><defs><linearGradient id="eqFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + soft + '"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></linearGradient></defs>' + zero + '<path d="' + area + '" fill="url(#eqFill)"/><path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/><circle cx="' + lastPt[0].toFixed(1) + '" cy="' + lastPt[1].toFixed(1) + '" r="3.2" fill="' + color + '"/><text x="' + Math.min(w - 4, lastPt[0] + 6).toFixed(1) + '" y="' + labelY.toFixed(1) + '" fill="' + color + '" font-size="10" font-weight="600" font-family="-apple-system, system-ui, sans-serif">' + esc(fmtMoneyPlain(last)) + "</text></svg></div>";
   }
 
   function calendarHTML(byDay, monthDate) {
@@ -3512,23 +3771,25 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     const daily = m.hasDailyLimit
       ? (m.dailyPnL < 0 ? fmtMoney(m.dailyRemaining, { sign: false }) + " resto" : fmtMoney(account.dailyLossLimit, { sign: false }))
       : "Sin l\u00edmite diario";
-    return '<section class="card acct-dash"><div class="card-head"><div class="card-title">' + esc(account.name) + '</div><div class="card-meta">' + esc(account.firm || "Cuenta") + '</div></div><div class="acct-dash-body"><div class="acct-bal">' + fmtMoney(m.current, { sign: false }) + '</div><div class="progress ' + progressCls + '"><span style="width:' + (m.progress * 100).toFixed(1) + '%"></span></div><div class="acct-progress-meta"><span>' + ratio + '</span><span>' + pct + " % \u00b7 " + remain + '</span></div><div class="acct-stats"><div><div class="acct-stat-label">Colch\u00f3n hasta MLL</div><div class="acct-stat-val" style="color:' + (m.toMll <= 0 ? "var(--red)" : "inherit") + '">' + fmtMoney(m.toMll, { sign: false }) + '</div></div><div><div class="acct-stat-label">L\u00edmite diario</div><div class="acct-stat-val">' + daily + '</div></div><div><div class="acct-stat-label">D\u00edas tradeados</div><div class="acct-stat-val">' + days.toLocaleString("es-ES") + '</div></div><div><div class="acct-stat-label">Trades</div><div class="acct-stat-val">' + stats.count.toLocaleString("es-ES") + "</div></div></div></div></section>";
+    const body = '<div class="acct-dash-body"><div class="acct-bal">' + fmtMoney(m.current, { sign: false }) + '</div><div class="progress ' + progressCls + '"><span style="width:' + (m.progress * 100).toFixed(1) + '%"></span></div><div class="acct-progress-meta"><span>' + ratio + '</span><span>' + pct + " % \u00b7 " + remain + '</span></div><div class="acct-stats"><div><div class="acct-stat-label">Colch\u00f3n hasta MLL</div><div class="acct-stat-val" style="color:' + (m.toMll <= 0 ? "var(--red)" : "inherit") + '">' + fmtMoney(m.toMll, { sign: false }) + '</div></div><div><div class="acct-stat-label">L\u00edmite diario</div><div class="acct-stat-val">' + daily + '</div></div><div><div class="acct-stat-label">D\u00edas tradeados</div><div class="acct-stat-val">' + days.toLocaleString("es-ES") + '</div></div><div><div class="acct-stat-label">Trades</div><div class="acct-stat-val">' + stats.count.toLocaleString("es-ES") + "</div></div></div></div>";
+    return cardShell("context", esc(account.name), esc(account.firm || "Cuenta"), body, "acct-dash");
   }
 
   function investmentCardHTML(accountId) {
     const inv = computeInvestment(accountId);
     const roiText = formatRoi(inv.roi);
     const boughtText = inv.bought === 1 ? "1 cuenta comprada" : inv.bought + " cuentas compradas";
-    let caption = boughtText;
+    let caption = esc(boughtText);
     if (inv.costPerFunded != null) {
       caption += " \u00b7 " + fmtMoney(inv.costPerFunded, { sign: false }) + " por fondeada";
     }
-    return '<section class="card inv-card" data-action="open-inversion"><div class="card-head"><div class="card-title">Inversi\u00f3n</div><div class="card-meta">fondeo</div></div><div class="hist-grid">' +
+    const body = '<div class="hist-grid">' +
       '<div class="hist-cell"><div class="hist-val">' + fmtMoney(inv.invested, { sign: false }) + '</div><div class="hist-label">Invertido</div></div>' +
       '<div class="hist-cell"><div class="hist-val">' + fmtMoney(inv.withdrawn, { sign: false }) + '</div><div class="hist-label">Retirado</div></div>' +
       '<div class="hist-cell"><div class="hist-val ' + clsPnL(inv.net) + '">' + fmtMoney(inv.net) + '</div><div class="hist-label">Neto</div></div>' +
       '<div class="hist-cell"><div class="hist-val ' + (inv.roi == null ? "" : clsPnL(inv.roi)) + '">' + roiText + '</div><div class="hist-label">ROI</div></div>' +
-      '</div><div class="hist-caption">' + esc(caption) + '</div><button type="button" class="link-row" data-action="open-inversion">Ver el desglose</button></section>';
+      '</div><div class="hist-caption">' + caption + '</div><button type="button" class="link-row" data-action="open-inversion">Ver el desglose</button>';
+    return cardShell("inversion", "Inversi\u00f3n", "fondeo", body, "inv-card");
   }
 
   function investmentEntryHTML() {
@@ -3591,8 +3852,8 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       '<path d="' + outPath + '" fill="none" stroke="#30d158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>' +
       '<circle cx="' + invPt[0].toFixed(1) + '" cy="' + invPt[1].toFixed(1) + '" r="3.2" fill="#ff9f0a"/>' +
       '<circle cx="' + outPt[0].toFixed(1) + '" cy="' + outPt[1].toFixed(1) + '" r="3.2" fill="#30d158"/>' +
-      '<text x="' + Math.min(w - 4, invPt[0] + 6).toFixed(1) + '" y="' + invLabelY.toFixed(1) + '" fill="#ff9f0a" font-size="10" font-weight="600" font-family="-apple-system, system-ui, sans-serif">' + esc(fmtMoney(invLast, { sign: false })) + "</text>" +
-      '<text x="' + Math.min(w - 4, outPt[0] + 6).toFixed(1) + '" y="' + outLabelY.toFixed(1) + '" fill="#30d158" font-size="10" font-weight="600" font-family="-apple-system, system-ui, sans-serif">' + esc(fmtMoney(outLast, { sign: false })) + "</text></svg></div>";
+      '<text x="' + Math.min(w - 4, invPt[0] + 6).toFixed(1) + '" y="' + invLabelY.toFixed(1) + '" fill="#ff9f0a" font-size="10" font-weight="600" font-family="-apple-system, system-ui, sans-serif">' + esc(fmtMoneyPlain(invLast, { sign: false })) + "</text>" +
+      '<text x="' + Math.min(w - 4, outPt[0] + 6).toFixed(1) + '" y="' + outLabelY.toFixed(1) + '" fill="#30d158" font-size="10" font-weight="600" font-family="-apple-system, system-ui, sans-serif">' + esc(fmtMoneyPlain(outLast, { sign: false })) + "</text></svg></div>";
   }
 
   function renderInversion() {
@@ -3781,7 +4042,8 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     } else {
       const hist = computeHistoric(stats);
       const histWR = hist.totalTrades ? (hist.winRate * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %" : "\u2014";
-      contextCard = '<section class="card hist-card"><div class="card-head"><div class="card-title">Hist\u00f3rico</div><div class="card-meta">incluye lo anterior a la app</div></div><div class="hist-grid"><div class="hist-cell"><div class="hist-val">' + histWR + '</div><div class="hist-label">Win rate hist\u00f3rico</div></div><div class="hist-cell"><div class="hist-val">' + hist.totalTrades.toLocaleString("es-ES") + '</div><div class="hist-label">Trades</div></div><div class="hist-cell"><div class="hist-val">' + hist.totalDays.toLocaleString("es-ES") + '</div><div class="hist-label">D\u00edas tradeados</div></div><div class="hist-cell"><div class="hist-val">' + esc(hist.timeLabel) + '</div><div class="hist-label">Tiempo tradeando</div></div></div><button type="button" class="link-row" data-action="tab" data-tab="analista">Ver el an\u00e1lisis completo</button></section>';
+      const histBody = '<div class="hist-grid"><div class="hist-cell"><div class="hist-val">' + histWR + '</div><div class="hist-label">Win rate hist\u00f3rico</div></div><div class="hist-cell"><div class="hist-val">' + hist.totalTrades.toLocaleString("es-ES") + '</div><div class="hist-label">Trades</div></div><div class="hist-cell"><div class="hist-val">' + hist.totalDays.toLocaleString("es-ES") + '</div><div class="hist-label">D\u00edas tradeados</div></div><div class="hist-cell"><div class="hist-val">' + esc(hist.timeLabel) + '</div><div class="hist-label">Tiempo tradeando</div></div></div><button type="button" class="link-row" data-action="tab" data-tab="analista">Ver el an\u00e1lisis completo</button>';
+      contextCard = cardShell("context", "Hist\u00f3rico", "incluye lo anterior a la app", histBody, "hist-card");
     }
 
     const appNet = stats.net;
@@ -3800,12 +4062,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       heroSub = '<span class="' + clsPnL(histPnL) + '">hist\u00f3rico ' + fmtMoney(histPnL) + '</span> \u00b7 <span class="' + clsPnL(appNet) + '">en la app ' + fmtMoney(appNet) + "</span>";
     }
     const sectionLabel = selected ? selected.name : "En la app";
-
-    return '<div class="page"><h1 class="large-title">Resumen</h1>' + chips +
-      '<div class="hero"><div class="hero-kicker' + (selected ? "" : " total") + '">' + heroKicker + '</div><div class="hero-pnl ' + clsPnL(heroValue) + '" id="heroPnL" data-value="' + heroValue + '">' + fmtMoney(heroValue) + '</div><div class="hero-sub">' + heroSub + "</div></div>" +
-      contextCard + investmentCardHTML(accountId) + installTip() + bannerHTML +
-      '<div class="section-label">' + esc(sectionLabel) + "</div>" +
-      '<div class="metrics">' +
+    const metricsBody = '<div class="metrics">' +
         metricCell("Aciertos", wr) +
         metricCell("Profit factor", pf) +
         metricCell("Expectativa", fmtMoney(stats.expectancy), clsPnL(stats.expectancy) + (Math.abs(stats.expectancy) >= 1000 ? " sm" : "")) +
@@ -3816,13 +4073,22 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
         metricCell("Racha actual", streakText, (stats.streakType === "win" ? "up sm" : stats.streakType === "loss" ? "down sm" : "sm")) +
         metricCell("Mejor trade", stats.best ? fmtMoney(stats.best.pnl) : "\u2014", stats.best ? "up sm" : "sm") +
         metricCell("Peor trade", stats.worst ? fmtMoney(stats.worst.pnl) : "\u2014", stats.worst ? "down sm" : "sm") +
-      '</div><section class="card"><div class="card-head"><div class="card-title">Curva de equidad</div><div class="card-meta">Acumulado</div></div>' + equitySVG(trades) +
-      '</section><section class="card"><div class="card-pad"><div class="card-title" style="margin-bottom:8px">Calendario</div>' + calendarHTML(stats.byDay, monthDate) +
-      '</div></section><section class="card"><div class="card-head"><div class="card-title">C\u00f3mo mejorar</div></div><div class="card-pad" style="padding-top:0">' + tipsHTML +
-      '</div></section><section class="card"><div class="card-head"><div class="card-title">Por setup</div></div><div class="card-pad" style="padding-top:0">' + barList(setupEntries, "Todav\u00eda no hay setups registrados.") +
-      '</div></section><section class="card"><div class="card-head"><div class="card-title">Por d\u00eda de la semana</div></div><div class="card-pad" style="padding-top:0">' + barList(weekdayEntries, "A\u00fan no hay suficientes sesiones.") +
-      '</div></section><section class="card"><div class="card-head"><div class="card-title">Cumplimiento de reglas</div></div><div class="card-pad" style="padding-top:4px"><div class="split"><div class="split-col"><div class="split-label">Con reglas</div><div class="split-val ' + clsPnL(stats.followedPnL) + '">' + fmtMoney(stats.followedPnL) + '</div><div class="split-meta">' + stats.followedN + " trade" + (stats.followedN === 1 ? "" : "s") + '</div></div><div class="split-col"><div class="split-label">Sin reglas</div><div class="split-val ' + clsPnL(stats.brokenPnL) + '">' + fmtMoney(stats.brokenPnL) + '</div><div class="split-meta">' + stats.brokenN + " trade" + (stats.brokenN === 1 ? "" : "s") + "</div></div></div></div></section></div>";
+      "</div>";
+    const rulesBody = '<div class="card-pad" style="padding-top:4px"><div class="split"><div class="split-col"><div class="split-label">Con reglas</div><div class="split-val ' + clsPnL(stats.followedPnL) + '">' + fmtMoney(stats.followedPnL) + '</div><div class="split-meta">' + stats.followedN + " trade" + (stats.followedN === 1 ? "" : "s") + '</div></div><div class="split-col"><div class="split-label">Sin reglas</div><div class="split-val ' + clsPnL(stats.brokenPnL) + '">' + fmtMoney(stats.brokenPnL) + '</div><div class="split-meta">' + stats.brokenN + " trade" + (stats.brokenN === 1 ? "" : "s") + "</div></div></div></div>";
+
+    return '<div class="page"><h1 class="large-title">Resumen</h1>' + chips +
+      '<div class="hero"><div class="hero-kicker' + (selected ? "" : " total") + '">' + heroKicker + '</div><div class="hero-pnl ' + clsPnL(heroValue) + '" id="heroPnL" data-value="' + heroValue + '">' + fmtMoney(heroValue) + '</div><div class="hero-sub">' + heroSub + "</div></div>" +
+      contextCard + investmentCardHTML(accountId) + installTip() + bannerHTML +
+      cardShell("metrics", esc(sectionLabel), "", metricsBody, "metrics-card") +
+      cardShell("equity", "Curva de equidad", "Acumulado", equitySVG(trades)) +
+      cardShell("calendario", "Calendario", "", '<div class="card-pad" style="padding-top:0">' + calendarHTML(stats.byDay, monthDate) + "</div>") +
+      cardShell("insights", "C\u00f3mo mejorar", "", '<div class="card-pad" style="padding-top:0">' + tipsHTML + "</div>") +
+      cardShell("setups", "Por setup", "", '<div class="card-pad" style="padding-top:0">' + barList(setupEntries, "Todav\u00eda no hay setups registrados.") + "</div>") +
+      cardShell("weekday", "Por d\u00eda de la semana", "", '<div class="card-pad" style="padding-top:0">' + barList(weekdayEntries, "A\u00fan no hay suficientes sesiones.") + "</div>") +
+      cardShell("reglas", "Cumplimiento de reglas", "", rulesBody) +
+      "</div>";
   }
+
 
   function filteredTrades() {
     const q = (ui.tradeQuery || "").trim().toLowerCase();
@@ -3886,7 +4152,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     const cards = (state.accounts || []).map((account) => {
       const m = accountMetrics(account);
       const progressCls = m.toMll <= 0 ? "danger" : "";
-      return '<article class="card acct" data-action="edit-account" data-id="' + esc(account.id) + '"><div class="acct-top"><div><div class="acct-name">' + esc(account.name) + '</div><div class="acct-firm">' + esc(account.firm || "\u2014") + " · " + (Number(account.size || account.startBalance) || 0).toLocaleString("es-ES") + ' $</div></div><span class="status ' + esc(account.status || "eval") + '">' + esc(statusLabel(account.status || "eval")) + '</span></div><div class="acct-bal">' + fmtMoney(m.current, { sign: false }) + '</div><div class="progress ' + progressCls + '"><span style="width:' + (m.progress * 100).toFixed(1) + '%"></span></div><div class="acct-stats"><div><div class="acct-stat-label">Objetivo</div><div class="acct-stat-val">' + fmtMoney(account.targetBalance, { sign: false }) + '</div></div><div><div class="acct-stat-label">' + (m.toTarget <= 0 ? "Objetivo" : "Para el objetivo") + '</div><div class="acct-stat-val" style="' + (m.toTarget <= 0 ? "color:var(--green)" : "") + '">' + (m.toTarget <= 0 ? "Alcanzado" : fmtMoney(m.toTarget, { sign: false })) + '</div></div><div><div class="acct-stat-label">Colchón hasta el MLL</div><div class="acct-stat-val" style="color:' + (m.toMll <= 0 ? "var(--red)" : "inherit") + '">' + fmtMoney(m.toMll, { sign: false }) + '</div></div><div><div class="acct-stat-label">Límite diario</div><div class="acct-stat-val">' + (m.hasDailyLimit ? (m.dailyPnL < 0 ? fmtMoney(m.dailyRemaining, { sign: false }) + " resto" : fmtMoney(account.dailyLossLimit, { sign: false })) : "Sin límite diario") + '</div></div></div><div class="toggle-row" data-action="noop"><span>Excluir de estadísticas</span><label class="switch"><input type="checkbox" data-action="toggle-exclude" data-id="' + esc(account.id) + '"' + (account.excludeFromStats ? " checked" : "") + '><span></span></label></div></article>';
+      return '<article class="card acct" data-action="edit-account" data-id="' + esc(account.id) + '"><div class="acct-top"><div><div class="acct-name">' + esc(account.name) + '</div><div class="acct-firm">' + esc(account.firm || "\u2014") + " · " + fmtMoney(Number(account.size || account.startBalance) || 0, { sign: false }) + '</div></div><span class="status ' + esc(account.status || "eval") + '">' + esc(statusLabel(account.status || "eval")) + '</span></div><div class="acct-bal">' + fmtMoney(m.current, { sign: false }) + '</div><div class="progress ' + progressCls + '"><span style="width:' + (m.progress * 100).toFixed(1) + '%"></span></div><div class="acct-stats"><div><div class="acct-stat-label">Objetivo</div><div class="acct-stat-val">' + fmtMoney(account.targetBalance, { sign: false }) + '</div></div><div><div class="acct-stat-label">' + (m.toTarget <= 0 ? "Objetivo" : "Para el objetivo") + '</div><div class="acct-stat-val" style="' + (m.toTarget <= 0 ? "color:var(--green)" : "") + '">' + (m.toTarget <= 0 ? "Alcanzado" : fmtMoney(m.toTarget, { sign: false })) + '</div></div><div><div class="acct-stat-label">Colchón hasta el MLL</div><div class="acct-stat-val" style="color:' + (m.toMll <= 0 ? "var(--red)" : "inherit") + '">' + fmtMoney(m.toMll, { sign: false }) + '</div></div><div><div class="acct-stat-label">Límite diario</div><div class="acct-stat-val">' + (m.hasDailyLimit ? (m.dailyPnL < 0 ? fmtMoney(m.dailyRemaining, { sign: false }) + " resto" : fmtMoney(account.dailyLossLimit, { sign: false })) : "Sin límite diario") + '</div></div></div><div class="toggle-row" data-action="noop"><span>Excluir de estadísticas</span><label class="switch"><input type="checkbox" data-action="toggle-exclude" data-id="' + esc(account.id) + '"' + (account.excludeFromStats ? " checked" : "") + '><span></span></label></div></article>';
     }).join("");
 
     return '<div class="page"><h1 class="large-title">Cuentas</h1>' +
@@ -3916,28 +4182,34 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     if (!Number.isFinite(to)) return;
     const from = (ui.heroPnL == null || !Number.isFinite(ui.heroPnL)) ? to : ui.heroPnL;
     ui.heroPnL = to;
+    if (ui.hideAmounts) {
+      el.innerHTML = fmtMoney(to);
+      el.className = "hero-pnl " + clsPnL(to);
+      return;
+    }
     if (from === to) return;
     ui.heroAnim = (ui.heroAnim || 0) + 1;
     const token = ui.heroAnim;
     const dur = 480;
     const startAt = performance.now();
-    el.textContent = fmtMoney(from);
+    el.innerHTML = fmtMoney(from);
     el.className = "hero-pnl " + clsPnL(from);
     const step = function (now) {
       if (ui.heroAnim !== token) return;
       const t = Math.min(1, (now - startAt) / dur);
       const eased = 1 - Math.pow(1 - t, 3);
       const val = from + (to - from) * eased;
-      el.textContent = fmtMoney(val);
+      el.innerHTML = fmtMoney(val);
       el.className = "hero-pnl " + clsPnL(val);
       if (t < 1) requestAnimationFrame(step);
       else {
-        el.textContent = fmtMoney(to);
+        el.innerHTML = fmtMoney(to);
         el.className = "hero-pnl " + clsPnL(to);
       }
     };
     requestAnimationFrame(step);
   }
+
 
   function render() {
 
@@ -3958,6 +4230,8 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     });
     content.scrollTop = ui._keepScroll ? scroll : 0;
     ui._keepScroll = false;
+    applyPrivacyMode();
+    syncCollapsedCards();
     updateTopbar();
     animateHeroIfNeeded();
     if (ui.tab === "trades") {
@@ -4451,6 +4725,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
 
   function openSettings() {
     const body =
+      '<div class="s-block"><div class="s-head">Privacidad</div><div class="s-toggle"><span class="s-copy"><span class="s-title">Ocultar importes</span><span class="s-sub">Censura los dólares en toda la interfaz. Los porcentajes y recuentos se siguen viendo.</span></span><label class="switch"><input type="checkbox" id="privacySwitch" data-action="toggle-privacy"' + (ui.hideAmounts ? " checked" : "") + '><span></span></label></div></div>' +
       '<div class="s-block"><div class="s-head">Histórico</div>' + historyFormHTML() + "</div>" +
       '<div class="s-block"><div class="s-head">Copias de seguridad</div><div class="group">' +
         settingsRow("export-json", ICO.download, "Exportar copia JSON", "Incluye las fotos. Los vídeos se quedan en el iPhone.") +
@@ -4694,6 +4969,15 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       return;
     }
     if (action === "settings") { openSettings(); return; }
+    if (action === "toggle-privacy") {
+      const on = (target.type === "checkbox") ? target.checked : !ui.hideAmounts;
+      setHideAmounts(on);
+      return;
+    }
+    if (action === "toggle-card") {
+      toggleCard(id || target.dataset.card);
+      return;
+    }
     if (action === "hide-install") {
       state.settings = state.settings || {};
       state.settings.hideInstallTip = true;
@@ -4918,6 +5202,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     mediaReady().catch(function (err) { console.warn(err); }).then(function () {
       state = loadState();
       loadUiPrefs();
+      applyPrivacyMode();
       resolveAccountFilter();
       return migrateLegacyScreenshots(state);
     }).then(function () {
@@ -4927,6 +5212,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       console.warn(err);
       state = state || loadState();
       loadUiPrefs();
+      applyPrivacyMode();
       resolveAccountFilter();
       saveState();
       render();
