@@ -908,9 +908,14 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .tab svg { width: 24px; height: 24px; }
 .tab-label {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 510;
-  letter-spacing: -0.1px;
+  letter-spacing: -0.15px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 1px;
 }
 .tab.on { color: var(--label); }
 
@@ -1262,6 +1267,172 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .viewer-stage video { width: 100%; }
 
+.hist-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.hist-cell {
+  padding: 12px 16px 14px;
+  position: relative;
+  min-width: 0;
+}
+.hist-cell:nth-child(odd)::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  right: 0;
+  bottom: 12px;
+  width: 0.5px;
+  background: var(--separator-2);
+}
+.hist-cell:nth-child(n+3)::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 0;
+  height: 0.5px;
+  background: var(--separator-2);
+}
+.hist-labelel {
+  font-size: 12px;
+  font-weight: 510;
+  color: var(--secondary);
+  margin-bottom: 4px;
+}
+.hist-val {
+  font-size: 22px;
+  font-weight: 670;
+  letter-spacing: -0.7px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+.hist-caption {
+  padding: 0 16px 14px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--secondary);
+}
+.pattern {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 16px;
+  position: relative;
+}
+.pattern + .pattern::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 0;
+  top: 0;
+  height: 0.5px;
+  background: var(--separator-2);
+}
+.pattern:active { background: var(--surface-2); }
+.pattern-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.pattern-kicker {
+  font-size: 11px;
+  font-weight: 670;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 3px;
+}
+.pattern-title {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.35px;
+  padding-right: 8px;
+}
+.pattern-cost {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  font-variant-numeric: tabular-nums;
+  color: var(--red);
+  flex-shrink: 0;
+  text-align: right;
+}
+.pattern-meta {
+  font-size: 13px;
+  color: var(--secondary);
+  margin-bottom: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.pattern-why, .pattern-fix {
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.16px;
+  color: var(--secondary);
+}
+.pattern-fix {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--green-softer);
+  color: #d8f5de;
+}
+.pattern-fix strong {
+  display: block;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 670;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.pattern-if {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 590;
+  color: var(--label);
+  letter-spacing: -0.2px;
+}
+.pattern-if span { color: var(--green); font-weight: 670; font-variant-numeric: tabular-nums; }
+.analyst-lead {
+  padding: 0 20px 14px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--secondary);
+  letter-spacing: -0.2px;
+}
+.section-label {
+  font-size: 13px;
+  font-weight: 610;
+  color: var(--secondary);
+  letter-spacing: -0.2px;
+  padding: 18px 20px 8px;
+}
+.link-row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px 14px;
+  font-size: 15px;
+  font-weight: 590;
+  color: var(--blue);
+  letter-spacing: -0.2px;
+  position: relative;
+}
+.link-row::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 0;
+  top: 0;
+  height: 0.5px;
+  background: var(--separator-2);
+}
+.link-row:active { background: var(--surface-2); }
+
+
 .destructive {
   width: 100%;
   height: 48px;
@@ -1426,6 +1597,12 @@ kbd, .kbd {
           </svg>
         </span>
       </button>
+      <button type="button" class="tab" data-action="tab" data-tab="analista" id="tab-analista">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3.2l1.55 5.1 5.35.2-4.2 3.35 1.45 5.2L12 14.3 8.85 16.99l1.45-5.2-4.2-3.35 5.35-.2L12 3.2z"/>
+        </svg>
+        <span class="tab-label">Analista</span>
+      </button>
       <button type="button" class="tab" data-action="tab" data-tab="accounts" id="tab-accounts">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="6" width="18" height="13" rx="2.2"/>
@@ -1461,7 +1638,8 @@ kbd, .kbd {
   "use strict";
 
   const STORAGE_KEY = "trading-journal-v1";
-  const DATA_VERSION = 2;
+  const DATA_VERSION = 3;
+  const OVERTRADE_N = 3;
   const MEDIA_DB_NAME = "trading-journal-media";
   const MEDIA_STORE = "files";
   const VIDEO_WARN_BYTES = 100 * 1024 * 1024;
@@ -1859,11 +2037,367 @@ kbd, .kbd {
       });
       data.version = 2;
     }
+    if (ver < 3) {
+      if (!data.history) data.history = defaultHistory();
+      data.version = 3;
+    }
+    if (!data.history) data.history = defaultHistory();
     (data.trades || []).forEach(function (t) {
       if (!Array.isArray(t.media)) t.media = [];
     });
     return data;
   }
+
+  function defaultHistory() {
+    return { trades: 135, wins: 72, days: 32, startDate: "2026-09-15" };
+  }
+
+  function getHistory() {
+    const src = (state && state.history) || defaultHistory();
+    const trades = Math.max(0, parseInt(src.trades, 10) || 0);
+    let wins = Math.max(0, parseInt(src.wins, 10) || 0);
+    if (wins > trades) wins = trades;
+    return {
+      trades: trades,
+      wins: wins,
+      days: Math.max(0, parseInt(src.days, 10) || 0),
+      startDate: src.startDate || "2026-09-15"
+    };
+  }
+
+  function formatTradingTime(startISO) {
+    const start = parseISODate(startISO);
+    const now = new Date();
+    start.setHours(0, 0, 0, 0);
+    now.setHours(0, 0, 0, 0);
+    const diff = now.getTime() - start.getTime();
+    const days = Math.max(0, Math.round(diff / 86400000));
+    if (days < 14) return days === 1 ? "1 día" : days + " días";
+    let months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+    if (now.getDate() < start.getDate()) months -= 1;
+    if (months < 1) {
+      const weeks = Math.max(1, Math.round(days / 7));
+      return weeks === 1 ? "1 semana" : weeks + " semanas";
+    }
+    if (months < 18) return months === 1 ? "1 mes" : months + " meses";
+    const years = Math.floor(months / 12);
+    const rem = months % 12;
+    const y = years === 1 ? "1 año" : years + " años";
+    if (!rem) return y;
+    return y + " y " + (rem === 1 ? "1 mes" : rem + " meses");
+  }
+
+  function computeHistoric(appStats) {
+    const h = getHistory();
+    const appTrades = appStats.count || 0;
+    const appWins = (appStats.wins && appStats.wins.length) || 0;
+    const appDays = appStats.byDay ? Object.keys(appStats.byDay).length : 0;
+    const totalTrades = h.trades + appTrades;
+    const totalWins = h.wins + appWins;
+    const totalDays = h.days + appDays;
+    const wr = totalTrades ? totalWins / totalTrades : 0;
+    return {
+      history: h,
+      totalTrades: totalTrades,
+      totalWins: totalWins,
+      totalDays: totalDays,
+      winRate: wr,
+      timeLabel: formatTradingTime(h.startDate)
+    };
+  }
+
+  function historyFormHTML() {
+    const h = getHistory();
+    const wr = h.trades ? (h.wins / h.trades * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %" : "\u2014";
+    return '<section class="card" id="historyCard"><div class="card-head"><div class="card-title">Histórico previo</div><div class="card-meta">' + wr + ' aciertos</div></div><p class="hint" style="padding:0 16px 8px">Lo que operaste antes de este journal. El Resumen lo combina con lo registrado aquí.</p><div class="group" style="margin:0 16px 16px;background:var(--surface-2)"><label class="row"><span class="row-label">Trades</span><input data-history="trades" inputmode="numeric" type="number" min="0" step="1" value="' + esc(h.trades) + '"></label><label class="row"><span class="row-label">Ganados</span><input data-history="wins" inputmode="numeric" type="number" min="0" step="1" value="' + esc(h.wins) + '"></label><label class="row"><span class="row-label">Días operados</span><input data-history="days" inputmode="numeric" type="number" min="0" step="1" value="' + esc(h.days) + '"></label><label class="row"><span class="row-label">Desde</span><input data-history="startDate" type="date" value="' + esc(h.startDate) + '"></label></div></section>';
+  }
+
+  function bindHistoryFields(root) {
+    if (!root) return;
+    const fields = root.querySelectorAll("[data-history]");
+    const save = function () {
+      const get = function (key) {
+        const el = root.querySelector("[data-history='" + key + "']");
+        return el ? el.value : "";
+      };
+      const trades = Math.max(0, parseInt(get("trades"), 10) || 0);
+      let wins = Math.max(0, parseInt(get("wins"), 10) || 0);
+      if (wins > trades) {
+        wins = trades;
+        const w = root.querySelector("[data-history='wins']");
+        if (w) w.value = String(wins);
+      }
+      state.history = {
+        trades: trades,
+        wins: wins,
+        days: Math.max(0, parseInt(get("days"), 10) || 0),
+        startDate: get("startDate") || "2026-09-15"
+      };
+      saveState();
+      const meta = root.querySelector("#historyCard .card-meta");
+      if (meta) {
+        meta.textContent = trades ? ((wins / trades * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " % aciertos") : "\u2014";
+      }
+    };
+    fields.forEach(function (el) {
+      el.addEventListener("change", save);
+    });
+  }
+
+  function tradeRowHTML(trade) {
+    const acc = accountById(trade.accountId);
+    const flags = (trade.followedRules === false ? '<span class="flag bad">Sin reglas</span>' : "") +
+      (trade.news ? '<span class="flag news">Noticia</span>' : "") +
+      (trade.emotion ? '<span class="flag">' + esc(emotionLabel(trade.emotion)) + "</span>" : "") +
+      mediaFlagHTML(trade);
+    return '<button type="button" class="trade" data-action="edit-trade" data-id="' + esc(trade.id) + '"><span class="side-dot ' + (trade.side === "short" ? "short" : "long") + '"></span><div class="trade-main"><div class="trade-top"><div class="trade-sym">' + esc(trade.symbol || "\u2014") + ' <span class="muted" style="font-weight:500;font-size:13px">' + (trade.side === "short" ? "Short" : "Long") + " · " + (trade.contracts || 1) + '</span></div><div class="trade-pnl ' + clsPnL(trade.pnl) + '">' + fmtMoney(trade.pnl) + '</div></div><div class="trade-sub">' + esc((acc && acc.name) || "Sin cuenta") + " · " + esc(trade.setup || "Sin especificar") + " · " + esc(trade.date || "") + " · " + esc(trade.time || "") + "</div>" + (flags ? '<div class="trade-flags">' + flags + "</div>" : "") + "</div></button>";
+  }
+
+  function medianOf(nums) {
+    if (!nums.length) return 0;
+    const sorted = nums.slice().sort(function (a, b) { return a - b; });
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+  }
+
+  function patternFrom(id, title, list, why, fix) {
+    if (!list || !list.length) return null;
+    const pnl = list.reduce(function (s, t) { return s + Number(t.pnl || 0); }, 0);
+    if (!(pnl < 0)) return null;
+    const wins = list.filter(function (t) { return t.pnl > 0; }).length;
+    const wr = (wins / list.length * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %";
+    return {
+      id: id,
+      title: title,
+      tradeIds: list.map(function (t) { return t.id; }),
+      n: list.length,
+      pnl: pnl,
+      wr: wr,
+      why: why,
+      fix: fix
+    };
+  }
+
+  function tradesByDaySorted(trades) {
+    const map = {};
+    trades.forEach(function (t) {
+      if (!map[t.date]) map[t.date] = [];
+      map[t.date].push(t);
+    });
+    Object.keys(map).forEach(function (date) {
+      map[date].sort(function (a, b) {
+        const ta = (a.time || "") + " " + (a.createdAt || "");
+        const tb = (b.time || "") + " " + (b.createdAt || "");
+        return ta < tb ? -1 : ta > tb ? 1 : 0;
+      });
+    });
+    return map;
+  }
+
+  function analyzeTrades(trades) {
+    const list = (trades || []).slice();
+    if (list.length < 10) return { ready: false, count: list.length, patterns: [], net: 0 };
+    const net = list.reduce(function (s, t) { return s + Number(t.pnl || 0); }, 0);
+    const patterns = [];
+    const wins = list.filter(function (t) { return t.pnl > 0; });
+    const avgWin = wins.length ? wins.reduce(function (s, t) { return s + t.pnl; }, 0) / wins.length : 0;
+
+    const byDay = tradesByDaySorted(list);
+    const revenge = [];
+    Object.keys(byDay).forEach(function (date) {
+      const day = byDay[date];
+      let lost = false;
+      day.forEach(function (t) {
+        if (lost) revenge.push(t);
+        if (t.pnl < 0) lost = true;
+      });
+    });
+    patterns.push(patternFrom(
+      "revenge",
+      "Trades después de la primera pérdida",
+      revenge,
+      "Tras el primer rojo del día, volviste a entrar " + revenge.length + (revenge.length === 1 ? " vez" : " veces") + ". Esa racha de revancha suma " + fmtMoney(revenge.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". El primer stop ya te decía que el día no era tuyo.",
+      "Cuando salte el primer stop, cierra la plataforma. Una pérdida y fuera, sin excepciones."
+    ));
+
+    const broken = list.filter(function (t) { return t.followedRules === false; });
+    patterns.push(patternFrom(
+      "rules",
+      "Operar sin respetar las reglas",
+      broken,
+      broken.length + (broken.length === 1 ? " trade marcado sin reglas suma " : " trades marcados sin reglas suman ") + fmtMoney(broken.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". Saltarte el plan convierte un sistema válido en ruleta.",
+      "Si una entrada no cumple todas las reglas, no la tomes. Anota la tentación, no el trade."
+    ));
+
+    ["fomo", "venganza", "ansioso"].forEach(function (emo) {
+      const subset = list.filter(function (t) { return t.emotion === emo; });
+      const labels = { fomo: "FOMO", venganza: "venganza", ansioso: "ansiedad" };
+      const titles = { fomo: "Entradas por FOMO", venganza: "Trades de venganza", ansioso: "Operar con ansiedad" };
+      const whys = {
+        fomo: "Entraste por miedo a quedarte fuera. El FOMO te ha costado " + fmtMoney(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + " en " + subset.length + (subset.length === 1 ? " trade" : " trades") + ", porque compras un movimiento ya hecho.",
+        venganza: "Operar con rabia para recuperar lo perdido te ha costado " + fmtMoney(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + " en " + subset.length + (subset.length === 1 ? " trade" : " trades") + ". El tamaño y el criterio se van juntos.",
+        ansioso: "Con ansiedad el gatillo se adelanta. " + subset.length + (subset.length === 1 ? " trade ansioso suma " : " trades ansiosos suman ") + fmtMoney(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + "."
+      };
+      const fixes = {
+        fomo: "Si sientes FOMO, espera el próximo setup limpio. El mercado no se acaba esta mañana.",
+        venganza: "Después de un rojo, diez minutos fuera de la pantalla antes de siquiera mirar el gráfico.",
+        ansioso: "Respira y recorre la checklist. Si no está completa, no hay trade."
+      };
+      patterns.push(patternFrom("emotion-" + emo, titles[emo], subset, whys[emo], fixes[emo]));
+    });
+
+    const bySetup = {};
+    list.forEach(function (t) {
+      const key = t.setup || "Sin especificar";
+      if (!bySetup[key]) bySetup[key] = [];
+      bySetup[key].push(t);
+    });
+    Object.keys(bySetup).forEach(function (name) {
+      const subset = bySetup[name];
+      if (subset.length < 2) return;
+      const slug = name.toLowerCase().replace(/[^a-z0-9áéíóúüñ]+/gi, "-").replace(/^-|-$/g, "") || "setup";
+      patterns.push(patternFrom(
+        "setup-" + slug,
+        "Setup «" + name + "» con expectativa negativa",
+        subset,
+        "Este setup ha perdido " + fmtMoney(subset.reduce(function (s, t) { return s + t.pnl; }, 0)) + " en " + subset.length + " trades (aciertos " + (subset.filter(function (t) { return t.pnl > 0; }).length / subset.length * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %). Seguir tomándolo es pagar por un patrón que no te da ventaja.",
+        "Pausa este setup hasta revisar 20 ejemplos. Si no encuentras un filtro claro, elimínalo del plan."
+      ));
+    });
+
+    const byWeekday = [0, 1, 2, 3, 4, 5, 6].map(function () { return []; });
+    list.forEach(function (t) {
+      const wd = (parseISODate(t.date).getDay() + 6) % 7;
+      byWeekday[wd].push(t);
+    });
+    let worstWd = -1, worstWdPnL = 0;
+    byWeekday.forEach(function (subset, i) {
+      if (subset.length < 2) return;
+      const pnl = subset.reduce(function (s, t) { return s + t.pnl; }, 0);
+      if (pnl < worstWdPnL) { worstWdPnL = pnl; worstWd = i; }
+    });
+    if (worstWd >= 0) {
+      const name = WEEKDAY_NAMES[worstWd];
+      const subset = byWeekday[worstWd];
+      patterns.push(patternFrom(
+        "weekday-" + worstWd,
+        "Operar en " + name,
+        subset,
+        "En " + name + " tus " + subset.length + " trades suman " + fmtMoney(worstWdPnL) + ". Ese día de la semana te está restando.",
+        "Reduce el tamaño a la mitad en " + name + " o pasa esa sesión a solo observación."
+      ));
+    }
+
+    const byHour = {};
+    list.forEach(function (t) {
+      const parts = (t.time || "00:00").split(":");
+      const h = Math.max(0, Math.min(23, parseInt(parts[0], 10) || 0));
+      if (!byHour[h]) byHour[h] = [];
+      byHour[h].push(t);
+    });
+    let worstHour = -1, worstHourPnL = 0;
+    Object.keys(byHour).forEach(function (key) {
+      const h = Number(key);
+      const subset = byHour[h];
+      if (subset.length < 2) return;
+      const pnl = subset.reduce(function (s, t) { return s + t.pnl; }, 0);
+      if (pnl < worstHourPnL) { worstHourPnL = pnl; worstHour = h; }
+    });
+    if (worstHour >= 0) {
+      const subset = byHour[worstHour];
+      const next = (worstHour + 1) % 24;
+      const labelHour = String(worstHour).padStart(2, "0") + ":00";
+      const labelNext = String(next).padStart(2, "0") + ":00";
+      patterns.push(patternFrom(
+        "hour-" + worstHour,
+        "Operar a las " + labelHour,
+        subset,
+        "En esa franja has perdido " + fmtMoney(worstHourPnL) + " con " + subset.length + " trades. Puede coincidir con noticias o con un horario en el que no estás fino.",
+        "Evita abrir operaciones entre las " + labelHour + " y las " + labelNext + " hasta que el sample sea claramente positivo."
+      ));
+    }
+
+    const sizes = list.map(function (t) { return Number(t.contracts) || 1; });
+    const med = medianOf(sizes);
+    const oversized = list.filter(function (t) { return (Number(t.contracts) || 1) > med; });
+    const medLabel = Number.isInteger(med) ? String(med) : med.toLocaleString("es-ES", { maximumFractionDigits: 1 });
+    patterns.push(patternFrom(
+      "oversize",
+      "Contratos por encima de tu mediana",
+      oversized,
+      "Tu mediana es " + medLabel + (med === 1 ? " contrato" : " contratos") + ", pero en " + oversized.length + (oversized.length === 1 ? " trade fuiste más grande y eso suma " : " trades fuiste más grande y eso suma ") + fmtMoney(oversized.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". El oversize convierte una pérdida normal en un golpe.",
+      "Fija un tamaño máximo igual a tu mediana (" + medLabel + ") y no lo subas para recuperar."
+    ));
+
+    const newsTrades = list.filter(function (t) { return !!t.news; });
+    patterns.push(patternFrom(
+      "news",
+      "Trades en noticia",
+      newsTrades,
+      newsTrades.length + (newsTrades.length === 1 ? " operación en noticia suma " : " operaciones en noticia suman ") + fmtMoney(newsTrades.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". El spread y los spikes no perdonan un método pensado para otra volatilidad.",
+      "Calendario a la vista: si hay high impact en los próximos 30 minutos, no operes."
+    ));
+
+    if (avgWin > 0) {
+      const holders = list.filter(function (t) { return t.pnl < 0 && Math.abs(t.pnl) > 2 * avgWin; });
+      patterns.push(patternFrom(
+        "holders",
+        "Dejar correr las pérdidas",
+        holders,
+        holders.length + (holders.length === 1 ? " trade perdió " : " trades perdieron ") + "más del doble de tu ganancia media (" + fmtMoney(avgWin, { sign: false }) + "). Aguantar el rojo te ha costado " + fmtMoney(holders.reduce(function (s, t) { return s + t.pnl; }, 0)) + ".",
+        "Coloca el stop al entrar y no lo alejes. Si el trade vale ya 2 veces tu ganancia media en contra, sal."
+      ));
+    }
+
+    const overN = typeof OVERTRADE_N === "number" ? OVERTRADE_N : 3;
+    const overDays = [];
+    let overTrades = [];
+    Object.keys(byDay).forEach(function (date) {
+      if (byDay[date].length > overN) {
+        overDays.push(date);
+        overTrades = overTrades.concat(byDay[date]);
+      }
+    });
+    patterns.push(patternFrom(
+      "overtrade",
+      "Días con más de " + overN + " trades",
+      overTrades,
+      overDays.length + (overDays.length === 1 ? " día con sobrecarga (" : " días con sobrecarga (") + overTrades.length + " operaciones) suman " + fmtMoney(overTrades.reduce(function (s, t) { return s + t.pnl; }, 0)) + ". Cuando el recuento sube, suele bajar la calidad.",
+      "Tope de " + overN + " trades al día. Al llegar, cierra la plataforma aunque queden ganas."
+    ));
+
+    const ranked = patterns.filter(Boolean).sort(function (a, b) { return a.pnl - b.pnl; });
+    return { ready: true, count: list.length, net: net, patterns: ranked };
+  }
+
+  function renderAnalista() {
+    const trades = includedTrades();
+    const analysis = analyzeTrades(trades);
+    if (!analysis.ready) {
+      return '<div class="page"><h1 class="large-title">Analista</h1><div class="empty"><h3>Aún no hay suficiente muestra</h3><p>Necesito al menos 10 trades para analizarte a fondo. Llevas ' + analysis.count + (analysis.count === 1 ? " registrado." : " registrados.") + " Cuando llegues a 10, aquí verás los errores que más te cuestan.</p></div></div>";
+    }
+    if (!analysis.patterns.length) {
+      return '<div class="page"><h1 class="large-title">Analista</h1><p class="analyst-lead">He revisado ' + analysis.count + " operaciones. No veo un error caro con un patrón claro. Sigue registrando con el mismo detalle.</p></div>";
+    }
+    const cards = analysis.patterns.map(function (p, idx) {
+      const hypothetical = analysis.net - p.pnl;
+      return '<button type="button" class="pattern" data-action="open-pattern" data-id="' + esc(p.id) + '"><div class="pattern-kicker">Error ' + (idx + 1) + '</div><div class="pattern-top"><div class="pattern-title">' + esc(p.title) + '</div><div class="pattern-cost">' + fmtMoney(p.pnl) + '</div></div><div class="pattern-meta">' + p.n + (p.n === 1 ? " trade" : " trades") + " · " + p.wr + " aciertos · " + fmtMoney(p.pnl) + '</div><p class="pattern-why">' + esc(p.why) + '</p><div class="pattern-fix"><strong>Cómo eliminarlo</strong>' + esc(p.fix) + '</div><div class="pattern-if">Si eliminaras este error, tu P&amp;L sería <span>' + fmtMoney(hypothetical) + "</span></div></button>";
+    }).join("");
+    return '<div class="page"><h1 class="large-title">Analista</h1><p class="analyst-lead">He revisado ' + analysis.count + " operaciones. Estos son los errores que más te están costando, ordenados por lo que te restan.</p><section class=\"card\">" + cards + "</section></div>";
+  }
+
+  function openPatternSheet(patternId) {
+    const analysis = analyzeTrades(includedTrades());
+    const pat = (analysis.patterns || []).find(function (p) { return p.id === patternId; });
+    if (!pat) { toast("No encuentro ese patrón."); return; }
+    const map = {};
+    includedTrades().forEach(function (t) { map[t.id] = t; });
+    const rows = pat.tradeIds.map(function (id) { return map[id]; }).filter(Boolean).map(tradeRowHTML).join("");
+    const hypo = analysis.net - pat.pnl;
+    const body = '<div style="padding:4px 20px 16px"><p class="pattern-why">' + esc(pat.why) + '</p><div class="pattern-fix"><strong>Cómo eliminarlo</strong>' + esc(pat.fix) + '</div><div class="pattern-if">Si eliminaras este error, tu P&amp;L sería <span>' + fmtMoney(hypo) + "</span></div></div><div class=\"card\" style=\"margin:0 16px 24px\">" + (rows || '<div class="empty"><p>No hay trades en este patrón.</p></div>') + "</div>";
+    openSheet("pattern", pat.title, body, { saveLabel: "Cerrar" });
+  }
+
 
   function migrateLegacyScreenshots(data) {
     const jobs = [];
@@ -1944,6 +2478,7 @@ kbd, .kbd {
       setups: ["Sin especificar"],
       checkins: {},
       settings: { hideInstallTip: false },
+      history: defaultHistory(),
       seededAt: "2026-11-10T16:00:00"
     };
   }
@@ -2348,8 +2883,13 @@ kbd, .kbd {
     const bannerHTML = banners.map((b) => '<div class="banner ' + b.kind + '"><div class="banner-body"><div class="banner-title">' + esc(b.title) + '</div><div class="banner-text">' + esc(b.text) + "</div></div></div>").join("");
     const tipsHTML = tips.map((t) => '<div class="insight"><div class="insight-kicker ' + (t.tone === "good" ? "good" : t.tone === "warn" ? "warn" : "bad") + '">' + esc(t.kicker) + '</div><div class="insight-title">' + esc(t.title) + '</div><div class="insight-body">' + esc(t.body) + "</div></div>").join("");
 
+    const hist = computeHistoric(stats);
+    const histWR = hist.totalTrades ? (hist.winRate * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " %" : "\u2014";
+    const histCard = '<section class="card hist-card"><div class="card-head"><div class="card-title">Histórico</div><div class="card-meta">incluye lo anterior a la app</div></div><div class="hist-grid"><div class="hist-cell"><div class="hist-val">' + histWR + '</div><div class="hist-label">Win rate histórico</div></div><div class="hist-cell"><div class="hist-val">' + hist.totalTrades.toLocaleString("es-ES") + '</div><div class="hist-label">Trades</div></div><div class="hist-cell"><div class="hist-val">' + hist.totalDays.toLocaleString("es-ES") + '</div><div class="hist-label">Días tradeados</div></div><div class="hist-cell"><div class="hist-val">' + esc(hist.timeLabel) + '</div><div class="hist-label">Tiempo tradeando</div></div></div><button type="button" class="link-row" data-action="tab" data-tab="analista">Ver el análisis completo</button></section>';
+
     return '<div class="page"><h1 class="large-title">Resumen</h1><div class="hero"><div class="hero-pnl ' + clsPnL(stats.net) + '">' + fmtMoney(stats.net) + '</div><div class="hero-sub">' + stats.count + (stats.count === 1 ? " operación" : " operaciones") + " · " + (wr === "\u2014" ? "sin win rate aún" : wr + " aciertos") + "</div></div>" +
-      installTip() + bannerHTML + chips +
+      histCard + installTip() + bannerHTML + chips +
+      '<div class="section-label">En la app</div>' +
       '<div class="metrics">' +
         metricCell("Aciertos", wr) +
         metricCell("Profit factor", pf) +
@@ -2434,7 +2974,9 @@ kbd, .kbd {
       return '<article class="card acct" data-action="edit-account" data-id="' + esc(account.id) + '"><div class="acct-top"><div><div class="acct-name">' + esc(account.name) + '</div><div class="acct-firm">' + esc(account.firm || "\u2014") + " · " + (Number(account.size || account.startBalance) || 0).toLocaleString("es-ES") + ' $</div></div><span class="status ' + esc(account.status || "eval") + '">' + esc(statusLabel(account.status || "eval")) + '</span></div><div class="acct-bal">' + fmtMoney(m.current, { sign: false }) + '</div><div class="progress ' + progressCls + '"><span style="width:' + (m.progress * 100).toFixed(1) + '%"></span></div><div class="acct-stats"><div><div class="acct-stat-label">Objetivo</div><div class="acct-stat-val">' + fmtMoney(account.targetBalance, { sign: false }) + '</div></div><div><div class="acct-stat-label">' + (m.toTarget <= 0 ? "Objetivo" : "Para el objetivo") + '</div><div class="acct-stat-val" style="' + (m.toTarget <= 0 ? "color:var(--green)" : "") + '">' + (m.toTarget <= 0 ? "Alcanzado" : fmtMoney(m.toTarget, { sign: false })) + '</div></div><div><div class="acct-stat-label">Colchón hasta el MLL</div><div class="acct-stat-val" style="color:' + (m.toMll <= 0 ? "var(--red)" : "inherit") + '">' + fmtMoney(m.toMll, { sign: false }) + '</div></div><div><div class="acct-stat-label">Límite diario</div><div class="acct-stat-val">' + (m.hasDailyLimit ? (m.dailyPnL < 0 ? fmtMoney(m.dailyRemaining, { sign: false }) + " resto" : fmtMoney(account.dailyLossLimit, { sign: false })) : "Sin límite diario") + '</div></div></div><div class="toggle-row" data-action="noop"><span>Excluir de estadísticas</span><label class="switch"><input type="checkbox" data-action="toggle-exclude" data-id="' + esc(account.id) + '"' + (account.excludeFromStats ? " checked" : "") + '><span></span></label></div></article>';
     }).join("");
 
-    return '<div class="page"><h1 class="large-title">Cuentas</h1>' + (cards || '<div class="empty"><h3>Sin cuentas</h3><p>Añade la primera cuenta de fondeo para empezar a registrar.</p></div>') + '<button type="button" class="add-row" data-action="new-account">+ Nueva cuenta</button></div>';
+    return '<div class="page"><h1 class="large-title">Cuentas</h1>' +
+      historyFormHTML() +
+      '' + (cards || '<div class="empty"><h3>Sin cuentas</h3><p>Añade la primera cuenta de fondeo para empezar a registrar.</p></div>') + '<button type="button" class="add-row" data-action="new-account">+ Nueva cuenta</button></div>';
   }
 
   function renderRules() {
@@ -2448,7 +2990,7 @@ kbd, .kbd {
     return '<div class="page"><h1 class="large-title">Reglas</h1><p class="hint" style="padding:0 20px 12px">Las decides antes de abrir el gráfico. No se negocian a mitad de sesión.</p><div class="card">' + (list || '<div class="empty"><p>Añade tu primera regla.</p></div>') + '</div><button type="button" class="add-row" data-action="new-rule">+ Nueva regla</button><div class="card"><div class="card-head"><div class="card-title">Check-in de hoy</div><div class="card-meta">' + parseISODate(today).toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" }) + "</div></div>" + (checklist || '<div class="card-pad muted">Añade reglas para usarlo como lista previa.</div>') + (done ? '<div class="banner ok" style="margin:8px 12px 12px"><div class="banner-body"><div class="banner-title">Listo para la sesión</div><div class="banner-text">Has confirmado todas las reglas de hoy. Ahora cúmplelas.</div></div></div>' : "") + "</div></div>";
   }
 
-  const TITLES = { dashboard: "Resumen", trades: "Operaciones", accounts: "Cuentas", rules: "Reglas" };
+  const TITLES = { dashboard: "Resumen", trades: "Operaciones", analista: "Analista", accounts: "Cuentas", rules: "Reglas" };
 
   function render() {
     const content = document.getElementById("content");
@@ -2456,9 +2998,11 @@ kbd, .kbd {
     let html = "";
     if (ui.tab === "dashboard") html = renderDashboard();
     else if (ui.tab === "trades") html = renderTrades();
+    else if (ui.tab === "analista") html = renderAnalista();
     else if (ui.tab === "accounts") html = renderAccounts();
     else html = renderRules();
     content.innerHTML = html;
+    bindHistoryFields(content);
     document.getElementById("compactTitle").textContent = TITLES[ui.tab] || "Journal";
     document.querySelectorAll(".tab[data-tab]").forEach((el) => {
       el.classList.toggle("on", el.dataset.tab === ui.tab);
@@ -2936,8 +3480,9 @@ kbd, .kbd {
   }
 
   function openSettings() {
-    const body = '<p class="hint">Tus datos viven en este iPhone. Haz una copia de vez en cuando.</p><div class="group"><button type="button" class="settings-row" data-action="export-json">Exportar copia JSON</button><button type="button" class="settings-row" data-action="export-csv">Exportar trades en CSV</button><button type="button" class="settings-row" data-action="import-json">Importar JSON</button></div><p class="hint">La copia JSON incluye las fotos. Los vídeos se quedan en el iPhone y no entran en el archivo, porque pesan demasiado.</p><div class="group"><button type="button" class="settings-row danger" data-action="restore-seed">Restaurar datos de ejemplo</button><button type="button" class="settings-row danger" data-action="wipe">Borrar todo</button></div><input id="importFile" type="file" accept="application/json,.json" hidden><p class="hint">Journal · tus operaciones, en un solo sitio.</p>';
+    const body = historyFormHTML() + '<p class="hint">Tus datos viven en este iPhone. Haz una copia de vez en cuando.</p><div class="group"><button type="button" class="settings-row" data-action="export-json">Exportar copia JSON</button><button type="button" class="settings-row" data-action="export-csv">Exportar trades en CSV</button><button type="button" class="settings-row" data-action="import-json">Importar JSON</button></div><p class="hint">La copia JSON incluye las fotos. Los vídeos se quedan en el iPhone y no entran en el archivo, porque pesan demasiado.</p><div class="group"><button type="button" class="settings-row danger" data-action="restore-seed">Restaurar datos de ejemplo</button><button type="button" class="settings-row danger" data-action="wipe">Borrar todo</button></div><input id="importFile" type="file" accept="application/json,.json" hidden><p class="hint">Journal · tus operaciones, en un solo sitio.</p>';
     openSheet("settings", "Ajustes", body, { saveLabel: "Cerrar" });
+    bindHistoryFields(document.getElementById("sheetBody"));
     const file = document.getElementById("importFile");
     if (file) file.addEventListener("change", onImportFile);
   }
@@ -3139,6 +3684,7 @@ kbd, .kbd {
     if (action === "noop") { e.stopPropagation(); return; }
 
     if (action === "tab") { ui.tab = target.dataset.tab; render(); return; }
+    if (action === "open-pattern") { openPatternSheet(id); return; }
     if (action === "new-trade") { openTradeSheet(); return; }
     if (action === "edit-trade") { openTradeSheet(id); return; }
     if (action === "close-sheet") { closeSheet(); return; }
@@ -3286,7 +3832,8 @@ kbd, .kbd {
             rules: DEFAULT_RULES.map((text) => ({ id: uid(), text: text })),
             setups: ["Sin especificar"],
             checkins: {},
-            settings: { hideInstallTip: !!(state.settings && state.settings.hideInstallTip) }
+            settings: { hideInstallTip: !!(state.settings && state.settings.hideInstallTip) },
+            history: defaultHistory()
           };
           closeSheet();
           persist();

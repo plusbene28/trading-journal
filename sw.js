@@ -1,5 +1,5 @@
 /* Trading Journal — service worker */
-const CACHE = "journal-v2";
+const CACHE = "journal-v3";
 const ASSETS = [
   "./",
   "./index.html",
