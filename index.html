@@ -2141,6 +2141,196 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
   box-shadow: none;
   background: transparent;
 }
+
+/* —— Días sin operar —— */
+button.cal-day {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.cal-day:not(.empty):active { transform: scale(0.96); }
+.cal-day.off {
+  background: var(--green-softer);
+  box-shadow: inset 0 0 0 1.5px rgba(62, 232, 154, 0.55);
+}
+.cal-day.off .cal-num { color: var(--green); }
+.cal-day.off .cal-mark {
+  color: var(--green);
+  width: 13px;
+  height: 13px;
+  display: grid;
+  place-items: center;
+  line-height: 0;
+}
+.cal-day.off .cal-mark svg { width: 12px; height: 12px; display: block; }
+.cal-day.off.today .cal-num { background: var(--green); color: #0b1210; }
+.cal-off-count { color: var(--green); font-weight: 590; }
+
+.disc-strip {
+  margin: 0 var(--page-x) 12px;
+  padding: 14px 14px 14px 16px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.disc-ico {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--green-soft);
+  color: var(--green);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.disc-ico svg { width: 20px; height: 20px; display: block; }
+.disc-copy { flex: 1; min-width: 0; }
+.disc-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 3px;
+}
+.disc-meta {
+  font-size: 13px;
+  color: var(--secondary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+.disc-cta {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 99px;
+  background: var(--green);
+  color: #0b1210;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+}
+.disc-cta:active { transform: scale(0.97); }
+.disc-pill {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 99px;
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 650;
+  display: grid;
+  place-items: center;
+  white-space: nowrap;
+}
+
+.off-hero {
+  text-align: center;
+  padding: 8px 8px 18px;
+}
+.off-hero-ico {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 12px;
+  border-radius: 18px;
+  background: var(--green-soft);
+  color: var(--green);
+  display: grid;
+  place-items: center;
+}
+.off-hero-ico svg { width: 28px; height: 28px; display: block; }
+.off-hero h3 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+.off-hero p {
+  font-size: 14px;
+  color: var(--secondary);
+  line-height: 1.4;
+}
+.off-hero.traded p { font-size: 22px; font-weight: 700; letter-spacing: -0.6px; }
+.off-tag {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+#praiseBackdrop { z-index: 84; }
+.praise {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-46%) scale(0.96);
+  z-index: 85;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .28s var(--ease), transform .28s var(--ease);
+}
+.praise.on {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  pointer-events: auto;
+}
+.praise-card {
+  background: rgba(22, 24, 30, 0.98);
+  border: 1px solid rgba(62, 232, 154, 0.28);
+  border-radius: 22px;
+  padding: 28px 22px 20px;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 48px rgba(62, 232, 154, 0.08);
+}
+.praise-ico {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  border-radius: 20px;
+  background: var(--green-soft);
+  color: var(--green);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 6px rgba(62, 232, 154, 0.08);
+}
+.praise-ico svg { width: 32px; height: 32px; display: block; }
+.praise-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.praise-msg {
+  font-size: 22px;
+  font-weight: 650;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+  margin: 0 0 22px;
+  color: var(--label);
+}
+.praise-btn {
+  width: 100%;
+  height: 46px;
+  border-radius: 14px;
+  background: var(--green);
+  color: #0b1210;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+.praise-btn:active { transform: scale(0.98); }
 </style>
 </head>
 <body>
@@ -2231,6 +2421,8 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     <div class="confirm" id="confirm" hidden></div>
     <div class="viewer" id="viewer" hidden></div>
     <div class="toast" id="toast" role="status"></div>
+    <div class="backdrop" id="praiseBackdrop" hidden></div>
+    <div class="praise" id="praise" hidden></div>
   </div>
   <script>
 (() => {
@@ -2238,8 +2430,8 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
 
   const STORAGE_KEY = "trading-journal-v1";
   const UI_STORAGE_KEY = "trading-journal-ui-v1";
-  const DATA_VERSION = 4;
-  const APP_VERSION = "1.8";
+  const DATA_VERSION = 5;
+  const APP_VERSION = "1.9";
   const OVERTRADE_N = 3;
   const MEDIA_DB_NAME = "trading-journal-media";
   const MEDIA_STORE = "files";
@@ -2264,6 +2456,30 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     { id: "reset", label: "Reset" },
     { id: "activacion", label: "Activación" },
     { id: "otro", label: "Otro" }
+  ];
+  const OFF_REASONS = [
+    { id: "sin-setup", label: "Sin setup A+" },
+    { id: "noticias", label: "Noticias" },
+    { id: "descanso", label: "Descanso" },
+    { id: "horario", label: "Fuera de horario" },
+    { id: "emocional", label: "Emocional" }
+  ];
+  const PRAISE_LINES = [
+    "No tradear también es hacer las cosas bien.",
+    "Proteger la cuenta es parte del trabajo.",
+    "Hoy ganaste disciplina.",
+    "Quedarte fuera cuando no hay setup A+ es operar bien.",
+    "Un día en blanco no es un día perdido.",
+    "La paciencia también cuenta como skill.",
+    "Hoy no diste un paso atrás. Te quedaste en el plan.",
+    "El mejor trade de hoy fue no entrar.",
+    "Cuidar el capital es tan importante como hacerlo crecer.",
+    "Descansar también es disciplina.",
+    "No forzar una operación es una decisión profesional.",
+    "Hoy elegiste el proceso, no la emoción.",
+    "Cada día sin operar por las razones correctas te acerca al payout.",
+    "Saber quedarte sentado es lo que te diferencia.",
+    "Hoy hiciste lo más difícil: no hacer nada."
   ];
   const WEEKDAYS = ["L", "M", "X", "J", "V", "S", "D"];
   const WEEKDAY_NAMES = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
@@ -2294,7 +2510,8 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     list: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7h11M9 12h11M9 17h11"/><path d="M5 7h.01M5 12h.01M5 17h.01"/></svg>',
     eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
     eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 1 0 2.8 2.8"/><path d="M9.9 5.15A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17.3 17.3 0 0 1-3.15 3.85"/><path d="M6.1 6.1C3.85 7.7 2 12 2 12s3.5 7 10 7a9.9 9.9 0 0 0 4.35-1.05"/><path d="M14.12 9.12A3 3 0 0 0 9.88 13.9"/></svg>',
-    chevD: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+    chevD: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+    shield: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2l7 3.1v5.7c0 4.5-2.9 7.9-7 9.3-4.1-1.4-7-4.8-7-9.3V6.3l7-3.1z"/><path d="M9.2 12.1l2.1 2.1 3.7-3.8"/></svg>'
   };
 
   let state = null;
@@ -2820,10 +3037,15 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       if (!Array.isArray(data.payouts)) data.payouts = [];
       data.version = 4;
     }
+    if (ver < 5) {
+      data.offDays = normalizeOffDays(data.offDays);
+      data.version = 5;
+    }
     if (!data.history) data.history = defaultHistory();
     if (data.history.pnl == null || data.history.pnl === "") data.history.pnl = -3352;
     if (!Array.isArray(data.expenses)) data.expenses = [];
     if (!Array.isArray(data.payouts)) data.payouts = [];
+    data.offDays = normalizeOffDays(data.offDays);
     (data.trades || []).forEach(function (t) {
       if (!Array.isArray(t.media)) t.media = [];
     });
@@ -3380,6 +3602,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       history: defaultHistory(),
       expenses: [],
       payouts: [],
+      offDays: {},
       seededAt: "2026-11-10T16:00:00"
     };
     data.expenses = seedExpenses(data);
@@ -3710,6 +3933,87 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     return '<div class="equity-wrap"><svg viewBox="0 0 ' + w + " " + h + '" preserveAspectRatio="none" aria-label="Curva de equidad"><defs><linearGradient id="eqFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="' + soft + '"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/></linearGradient></defs>' + zero + '<path d="' + area + '" fill="url(#eqFill)"/><path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/><circle cx="' + lastPt[0].toFixed(1) + '" cy="' + lastPt[1].toFixed(1) + '" r="3.2" fill="' + color + '"/><text x="' + Math.min(w - 4, lastPt[0] + 6).toFixed(1) + '" y="' + labelY.toFixed(1) + '" fill="' + color + '" font-size="10" font-weight="600" font-family="-apple-system, system-ui, sans-serif">' + esc(fmtMoneyPlain(last)) + "</text></svg></div>";
   }
 
+  function normalizeOffDays(raw) {
+    const out = {};
+    if (!raw) return out;
+    const put = function (iso, item) {
+      if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return;
+      const src = item && typeof item === "object" ? item : {};
+      out[iso] = {
+        date: iso,
+        reason: typeof src.reason === "string" ? src.reason : "",
+        note: typeof src.note === "string" ? src.note : "",
+        createdAt: src.createdAt || (iso + "T12:00:00")
+      };
+    };
+    if (Array.isArray(raw)) {
+      raw.forEach(function (item) { if (item) put(item.date, item); });
+      return out;
+    }
+    if (typeof raw === "object") {
+      Object.keys(raw).forEach(function (key) {
+        const item = raw[key];
+        if (item && typeof item === "object") put(item.date || key, item);
+        else if (item) put(key, { date: key, createdAt: String(item) });
+      });
+    }
+    return out;
+  }
+
+  function offDaysMap() {
+    return (state && state.offDays) || {};
+  }
+
+  function offDayFor(iso) {
+    return offDaysMap()[iso] || null;
+  }
+
+  function tradesOnDate(iso) {
+    return (state.trades || []).filter(function (t) { return t.date === iso; });
+  }
+
+  function offReasonLabel(id) {
+    const found = OFF_REASONS.find(function (r) { return r.id === id; });
+    return found ? found.label : "";
+  }
+
+  function formatLongDate(iso) {
+    const raw = parseISODate(iso).toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
+    return raw.charAt(0).toUpperCase() + raw.slice(1);
+  }
+
+  function formatSheetDate(iso) {
+    const raw = parseISODate(iso).toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" });
+    return raw.replace(/\./g, "").replace(/^\w/, function (ch) { return ch.toUpperCase(); });
+  }
+
+  function computeDiscipline() {
+    const map = offDaysMap();
+    const dates = Object.keys(map).sort();
+    const today = todayISO();
+    let cursor = today;
+    if (!map[cursor]) {
+      const y = parseISODate(today);
+      y.setDate(y.getDate() - 1);
+      cursor = todayISO(y);
+    }
+    let streak = 0;
+    while (map[cursor]) {
+      streak += 1;
+      const d = parseISODate(cursor);
+      d.setDate(d.getDate() - 1);
+      cursor = todayISO(d);
+    }
+    return { count: dates.length, streak: streak, dates: dates };
+  }
+
+  function dayAriaLabel(iso, pnl, isOff) {
+    const label = formatLongDate(iso);
+    if (pnl != null) return label + ", " + formatMoneyPlain(pnl);
+    if (isOff) return label + ", día sin operar";
+    return label;
+  }
+
   function calendarHTML(byDay, monthDate) {
     const year = monthDate.getFullYear();
     const month = monthDate.getMonth();
@@ -3719,31 +4023,56 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     const rawTitle = first.toLocaleDateString("es-ES", { month: "long", year: "numeric" });
     const title = rawTitle.charAt(0).toUpperCase() + rawTitle.slice(1);
     const today = todayISO();
-    const values = [];
-    for (let d = 1; d <= daysInMonth; d++) {
-      const iso = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
-      if (byDay[iso] != null) values.push(Math.abs(byDay[iso]));
-    }
+    const offMap = offDaysMap();
     let cells = "";
     for (let i = 0; i < lead; i++) cells += '<div class="cal-day empty"></div>';
     for (let d = 1; d <= daysInMonth; d++) {
       const iso = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
       const pnl = byDay[iso];
       const isToday = iso === today;
-      let cls = "cal-day" + (isToday ? " today" : "");
+      const isOff = pnl == null && !!offMap[iso];
+      let cls = "cal-day" + (isToday ? " today" : "") + (isOff ? " off" : "");
       let amount = "";
       if (pnl != null) {
         cls += " " + clsPnL(pnl);
         amount = '<div class="cal-pnl">' + compactPnL(pnl) + "</div>";
+      } else if (isOff) {
+        amount = '<div class="cal-mark" aria-hidden="true">' + ICO.shield + "</div>";
       }
-      cells += '<div class="' + cls + '"><div class="cal-num">' + d + "</div>" + amount + "</div>";
+      cells += '<button type="button" class="' + cls + '" data-action="open-day" data-date="' + iso + '" aria-label="' + esc(dayAriaLabel(iso, pnl, isOff)) + '"><div class="cal-num">' + d + "</div>" + amount + "</button>";
     }
     const prefix = year + "-" + String(month + 1).padStart(2, "0");
-    let monthNet = 0, monthDays = 0;
+    let monthNet = 0, monthDays = 0, monthOff = 0;
     Object.keys(byDay).forEach((iso) => {
       if (iso.indexOf(prefix) === 0) { monthNet += byDay[iso]; monthDays += 1; }
     });
-    return '<div class="cal-nav"><button type="button" class="chev" data-action="month-prev" aria-label="Mes anterior">' + ICO.chevL + '</button><h3>' + esc(title) + '</h3><button type="button" class="chev" data-action="month-next" aria-label="Mes siguiente">' + ICO.chevR + '</button></div><div class="cal-grid">' + WEEKDAYS.map((d) => '<div class="cal-wd">' + d + "</div>").join("") + cells + '</div><div class="cal-legend"><span>' + monthDays + " día" + (monthDays === 1 ? "" : "s") + " operado" + (monthDays === 1 ? "" : "s") + '</span><span class="' + clsPnL(monthNet) + '">' + fmtMoney(monthNet) + "</span></div>";
+    Object.keys(offMap).forEach((iso) => {
+      if (iso.indexOf(prefix) === 0 && byDay[iso] == null) monthOff += 1;
+    });
+    let legendLeft = monthDays + " día" + (monthDays === 1 ? "" : "s") + " operado" + (monthDays === 1 ? "" : "s");
+    if (monthOff) {
+      legendLeft += ' · <span class="cal-off-count">' + monthOff + " de disciplina</span>";
+    }
+    return '<div class="cal-nav"><button type="button" class="chev" data-action="month-prev" aria-label="Mes anterior">' + ICO.chevL + '</button><h3>' + esc(title) + '</h3><button type="button" class="chev" data-action="month-next" aria-label="Mes siguiente">' + ICO.chevR + '</button></div><div class="cal-grid">' + WEEKDAYS.map((d) => '<div class="cal-wd">' + d + "</div>").join("") + cells + '</div><div class="cal-legend"><span>' + legendLeft + '</span><span class="' + clsPnL(monthNet) + '">' + fmtMoney(monthNet) + "</span></div>";
+  }
+
+  function disciplineStripHTML() {
+    const disc = computeDiscipline();
+    const today = todayISO();
+    const markedToday = !!offDayFor(today);
+    const tradedToday = tradesOnDate(today).length > 0;
+    let meta;
+    if (!disc.count) meta = "Marca los días en los que elegiste no operar.";
+    else {
+      meta = disc.count + (disc.count === 1 ? " día sin operar" : " días sin operar");
+      if (disc.streak >= 2) meta += " · racha de " + disc.streak;
+      else if (markedToday) meta += " · incluye hoy";
+    }
+    let cta;
+    if (markedToday) cta = '<span class="disc-pill">Hoy no operas</span>';
+    else if (!tradedToday) cta = '<button type="button" class="disc-cta" data-action="mark-today">Hoy no opero</button>';
+    else cta = "";
+    return '<div class="disc-strip"><div class="disc-ico" aria-hidden="true">' + ICO.shield + '</div><div class="disc-copy"><div class="disc-kicker">Días de disciplina</div><div class="disc-meta">' + esc(meta) + "</div></div>" + cta + "</div>";
   }
 
   function barList(entries, empty) {
@@ -4081,6 +4410,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       contextCard + investmentCardHTML(accountId) + installTip() + bannerHTML +
       cardShell("metrics", esc(sectionLabel), "", metricsBody, "metrics-card") +
       cardShell("equity", "Curva de equidad", "Acumulado", equitySVG(trades)) +
+      disciplineStripHTML() +
       cardShell("calendario", "Calendario", "", '<div class="card-pad" style="padding-top:0">' + calendarHTML(stats.byDay, monthDate) + "</div>") +
       cardShell("insights", "C\u00f3mo mejorar", "", '<div class="card-pad" style="padding-top:0">' + tipsHTML + "</div>") +
       cardShell("setups", "Por setup", "", '<div class="card-pad" style="padding-top:0">' + barList(setupEntries, "Todav\u00eda no hay setups registrados.") + "</div>") +
@@ -4252,6 +4582,167 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
   function updateTopbar() {
     const content = document.getElementById("content");
     document.getElementById("topbar").classList.toggle("scrolled", content.scrollTop > 28);
+  }
+
+  function collectOffDraft() {
+    if (!ui.draft || ui.draft.kind !== "offday") return;
+    const note = document.getElementById("off-note");
+    if (note) ui.draft.note = note.value;
+  }
+
+  function pickPraise() {
+    const lines = PRAISE_LINES;
+    let idx = Math.floor(Math.random() * lines.length);
+    if (ui.lastPraise === idx && lines.length > 1) idx = (idx + 1) % lines.length;
+    ui.lastPraise = idx;
+    return lines[idx];
+  }
+
+  function closePraise() {
+    const el = document.getElementById("praise");
+    const back = document.getElementById("praiseBackdrop");
+    if (!el || el.hidden) return;
+    el.classList.remove("on");
+    back.classList.remove("on");
+    clearTimeout(ui.praiseTimer);
+    setTimeout(function () {
+      if (!el.classList.contains("on")) {
+        el.hidden = true;
+        back.hidden = true;
+        el.innerHTML = "";
+      }
+    }, 280);
+  }
+
+  function showPraise(message) {
+    const el = document.getElementById("praise");
+    const back = document.getElementById("praiseBackdrop");
+    const line = message || pickPraise();
+    el.hidden = false;
+    back.hidden = false;
+    el.setAttribute("role", "dialog");
+    el.setAttribute("aria-label", "Día sin operar");
+    el.innerHTML = '<div class="praise-card"><div class="praise-ico" aria-hidden="true">' + ICO.shield + '</div><div class="praise-kicker">Día sin operar</div><p class="praise-msg">' + esc(line) + '</p><button type="button" class="praise-btn" data-action="close-praise">Seguir</button></div>';
+    requestAnimationFrame(function () {
+      back.classList.add("on");
+      el.classList.add("on");
+    });
+    clearTimeout(ui.praiseTimer);
+    ui.praiseTimer = setTimeout(closePraise, 5200);
+    if (navigator.vibrate) navigator.vibrate(12);
+  }
+
+  function daySheetBody(iso) {
+    const d = ui.draft || { date: iso, reason: "", note: "" };
+    const trades = sortTrades(tradesOnDate(iso)).reverse();
+    const off = offDayFor(iso);
+    const isFuture = iso > todayISO();
+    const isToday = iso === todayISO();
+    let hero;
+    if (off && !trades.length) {
+      const reason = offReasonLabel(off.reason || d.reason);
+      hero = '<div class="off-hero"><div class="off-hero-ico">' + ICO.shield + '</div><h3>Día sin operar</h3><p>No tradear también es hacer las cosas bien.</p>' +
+        (reason ? '<div class="off-tag">' + esc(reason) + "</div>" : "") + "</div>";
+    } else if (trades.length) {
+      const total = trades.reduce(function (s, t) { return s + t.pnl; }, 0);
+      hero = '<div class="off-hero traded"><h3>' + trades.length + (trades.length === 1 ? " operación" : " operaciones") + '</h3><p class="' + clsPnL(total) + '">' + fmtMoney(total) + "</p></div>";
+    } else {
+      hero = '<div class="off-hero"><div class="off-hero-ico">' + ICO.shield + '</div><h3>¿Día sin operar?</h3><p>' + (isFuture ? "Aún no puedes marcar un día futuro." : (isToday ? "Si hoy no hay setup A+, márcalo y cierra la plataforma." : "Marca este día si elegiste quedarte fuera.")) + "</p></div>";
+    }
+
+    const tradeList = trades.length
+      ? '<div class="group">' + trades.map(tradeRowHTML).join("") + "</div>"
+      : "";
+
+    let form = "";
+    if (trades.length) {
+      form = '<p class="hint">Este día ya tiene operaciones, así que no se puede marcar como día sin operar.</p>';
+    } else if (isFuture) {
+      form = "";
+    } else {
+      const reason = d.reason || (off && off.reason) || "";
+      const note = d.note != null ? d.note : ((off && off.note) || "");
+      const chips = OFF_REASONS.map(function (r) {
+        return '<button type="button" class="chip ' + (reason === r.id ? "on" : "") + '" data-action="draft-off-reason" data-id="' + esc(r.id) + '">' + esc(r.label) + "</button>";
+      }).join("");
+      form = '<p class="hint">Motivo (opcional)</p><div class="chip-wrap" style="margin-bottom:16px">' + chips + "</div>" +
+        '<div class="group"><div class="row-note"><textarea id="off-note" placeholder="Una nota, si quieres…">' + esc(note) + "</textarea></div></div>";
+      if (off) {
+        form += '<button type="button" class="destructive" data-action="unmark-off" data-date="' + esc(iso) + '">Quitar marca</button>';
+      }
+    }
+
+    const addTrade = '<button type="button" class="add-row" style="width:100%;margin:8px 0 0" data-action="new-trade-on-day" data-date="' + esc(iso) + '">' +
+      (off && !trades.length ? "+ Añadir trade (quita la marca)" : "+ Añadir trade") + "</button>";
+
+    return hero + tradeList + form + addTrade;
+  }
+
+  function openDaySheet(iso) {
+    if (!iso) return;
+    const trades = tradesOnDate(iso);
+    const off = offDayFor(iso);
+    ui.draft = {
+      kind: "offday",
+      date: iso,
+      reason: (off && off.reason) || "",
+      note: (off && off.note) || "",
+      existing: !!off
+    };
+    let saveLabel = "Cerrar";
+    if (!trades.length && iso <= todayISO()) saveLabel = off ? "Guardar" : "Marcar día";
+    openSheet("offday", formatSheetDate(iso), daySheetBody(iso), { saveLabel: saveLabel });
+  }
+
+  function refreshDaySheet() {
+    if (!ui.draft || ui.draft.kind !== "offday") return;
+    collectOffDraft();
+    const body = document.getElementById("sheetBody");
+    const bar = document.getElementById("sheetBar");
+    if (body) body.innerHTML = daySheetBody(ui.draft.date);
+    if (bar) {
+      const h2 = bar.querySelector("h2");
+      const save = bar.querySelector(".sheet-link.strong");
+      if (h2) h2.textContent = formatSheetDate(ui.draft.date);
+      if (save) {
+        const trades = tradesOnDate(ui.draft.date);
+        const off = offDayFor(ui.draft.date);
+        if (!trades.length && ui.draft.date <= todayISO()) save.textContent = off ? "Guardar" : "Marcar día";
+        else save.textContent = "Cerrar";
+      }
+    }
+  }
+
+  function saveOffDay() {
+    collectOffDraft();
+    const d = ui.draft;
+    if (!d || d.kind !== "offday") { closeSheet(); return; }
+    const iso = d.date;
+    if (!iso) { closeSheet(); return; }
+    if (tradesOnDate(iso).length || iso > todayISO()) {
+      closeSheet();
+      return;
+    }
+    const existed = !!offDayFor(iso);
+    state.offDays = state.offDays || {};
+    state.offDays[iso] = {
+      date: iso,
+      reason: d.reason || "",
+      note: (d.note || "").trim(),
+      createdAt: (offDayFor(iso) && offDayFor(iso).createdAt) || new Date().toISOString()
+    };
+    closeSheet();
+    persist();
+    if (existed) toast("Día actualizado");
+    else showPraise();
+  }
+
+  function unmarkOffDay(iso) {
+    if (!iso || !offDayFor(iso)) return;
+    delete state.offDays[iso];
+    closeSheet();
+    persist();
+    toast("Marca quitada");
   }
 
   function openSheet(kind, title, body, opts) {
@@ -4542,7 +5033,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
   }
 
 
-  function openTradeSheet(id) {
+  function openTradeSheet(id, presetDate) {
     const existing = id && (state.trades || []).find((t) => t.id === id);
     if (existing) {
       ui.draft = Object.assign({}, existing, {
@@ -4560,7 +5051,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       ui.draft = {
         id: null,
         accountId: defaultAccount,
-        date: todayISO(),
+        date: presetDate || todayISO(),
         time: nowTime(),
         symbol: "NQ",
         side: "long",
@@ -4629,6 +5120,10 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     } else {
       state.trades = state.trades.concat([record]);
       toast("Trade guardado");
+    }
+    if (record.date && offDayFor(record.date)) {
+      delete state.offDays[record.date];
+      toast("Trade guardado. Se quitó la marca de día sin operar.");
     }
     closeSheet();
     persist();
@@ -4729,7 +5224,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       '<div class="s-block"><div class="s-head">Histórico</div>' + historyFormHTML() + "</div>" +
       '<div class="s-block"><div class="s-head">Copias de seguridad</div><div class="group">' +
         settingsRow("export-json", ICO.download, "Exportar copia JSON", "Incluye las fotos. Los vídeos se quedan en el iPhone.") +
-        settingsRow("export-csv", ICO.list, "Exportar CSV", "Trades, gastos y payouts.") +
+        settingsRow("export-csv", ICO.list, "Exportar CSV", "Trades, gastos, payouts y días sin operar.") +
         settingsRow("import-json", ICO.upload, "Importar JSON", "Sustituye los datos actuales de esta app.") +
       "</div></div>" +
       '<div class="s-block"><div class="s-head">Datos de la app</div><div class="group">' +
@@ -4822,6 +5317,14 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
     (state.payouts || []).slice().sort((a, b) => (a.date || "").localeCompare(b.date || "")).forEach((p) => {
       const acc = p.accountId ? accountById(p.accountId) : null;
       lines.push([p.date, p.firm, p.amount, acc ? acc.name : ""].map(csvEscape).join(";"));
+    });
+    lines.push("");
+    lines.push("DIAS SIN OPERAR");
+    lines.push(["fecha","motivo","nota"].join(";"));
+    Object.keys(offDaysMap()).sort().forEach((iso) => {
+      const day = offDayFor(iso);
+      if (!day) return;
+      lines.push([day.date, offReasonLabel(day.reason), day.note || ""].map(csvEscape).join(";"));
     });
     download("journal-" + todayISO() + ".csv", lines.join("\n"), "text/csv");
     toast("CSV exportado");
@@ -4947,7 +5450,8 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
   function onClick(e) {
     const target = e.target.closest("[data-action]");
     if (!target) {
-      if (e.target.id === "backdrop") closeSheet();
+      if (e.target.id === "praiseBackdrop") closePraise();
+      else if (e.target.id === "backdrop") closeSheet();
       return;
     }
     const action = target.dataset.action;
@@ -4965,6 +5469,7 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       else if (ui.sheet === "rule") saveRule();
       else if (ui.sheet === "expense") saveExpense();
       else if (ui.sheet === "payout") savePayout();
+      else if (ui.sheet === "offday") saveOffDay();
       else closeSheet();
       return;
     }
@@ -4999,6 +5504,17 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       render();
       return;
     }
+    if (action === "open-day") { openDaySheet(target.dataset.date); return; }
+    if (action === "mark-today") { openDaySheet(todayISO()); return; }
+    if (action === "draft-off-reason") {
+      collectOffDraft();
+      ui.draft.reason = ui.draft.reason === id ? "" : id;
+      refreshDaySheet();
+      return;
+    }
+    if (action === "unmark-off") { unmarkOffDay(target.dataset.date || id); return; }
+    if (action === "new-trade-on-day") { openTradeSheet(null, target.dataset.date); return; }
+    if (action === "close-praise") { closePraise(); return; }
     if (action === "filter-result") { ui.tradeResult = id; ui._keepScroll = true; render(); return; }
     if (action === "filter-account") { ui.tradeAccount = id; ui._keepScroll = true; render(); return; }
     if (action === "filter-setup") { ui.tradeSetup = id; ui._keepScroll = true; render(); return; }
@@ -5155,7 +5671,8 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
             settings: { hideInstallTip: !!(state.settings && state.settings.hideInstallTip) },
             history: defaultHistory(),
             expenses: [],
-            payouts: []
+            payouts: [],
+            offDays: {}
           };
           closeSheet();
           persist();
@@ -5184,6 +5701,8 @@ body { font-feature-settings: "ss01" 1, "tnum" 0; }
       if (e.key === "Escape") {
         const viewer = document.getElementById("viewer");
         if (viewer && !viewer.hidden) { closeViewer(); return; }
+        const praise = document.getElementById("praise");
+        if (praise && !praise.hidden) { closePraise(); return; }
         if (!document.getElementById("confirm").hidden) return;
         if (ui.sheet) closeSheet();
       }
